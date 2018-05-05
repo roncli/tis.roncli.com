@@ -1,0 +1,27 @@
+{
+    "name": "tis.roncli.com",
+    "version": "1.0.0",
+    "description": "The site that allows users to search old Trax in Space 1 files.",
+    "homepage": "https://github.com/roncli/tis.roncli.com",
+    "bugs": {
+        "url": "https://github.com/roncli/tis.roncli.com/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/roncli/tis.roncli.com"
+    },
+    "main": "index.js",
+    "author": {
+        "name": "Ronald M. Clifford",
+        "email": "roncli@roncli.com",
+        "url": "http://roncli.com"
+    },
+    "license": "MIT",
+    "dependencies": {
+        "compression": "1.7.2",
+        "express": "4.16.3",
+        "find": "0.2.9",
+        "morgan": "1.9.0",
+        "prettysize": "1.1.0"
+    }
+}
