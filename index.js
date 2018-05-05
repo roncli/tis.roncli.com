@@ -45,7 +45,7 @@ app.get(/search/, (req, res) => {
     // This will be a 200, begin writing the HTML.
     res.status(200);
     res.write("<html><head><style>* {font-family: Arial, sans-serif;}</style></head><body>");
-    res.write(`<h1>tis.roncli.com</h1><a href="/">Home</a><br /><br /><form action="/search" method="GET"><input type="text" name="text" value="${req.query.text.replace("\"", "&quot;")}" /> <input type="submit" value="Search"></form><h2>Search results: ${req.query.text}</h2>`);
+    res.write(`<h1>tis.roncli.com</h1><a href="/">Home</a><br /><br /><form action="/search" method="GET"><input type="text" name="text" value="${req.query.text.replace(/"/g, "&quot;")}" /> <input type="submit" value="Search"></form><h2>Search results: ${req.query.text}</h2>`);
 
     // Get the files directory.
     const fileDir = path.join(__dirname, "files");
@@ -54,14 +54,14 @@ app.get(/search/, (req, res) => {
     const queue = new Queue();
 
     // Loop through the files found and output them.
-    find.eachfile(new RegExp(req.query.text), fileDir, (file) => {
+    find.eachfile(new RegExp(req.query.text, "i"), fileDir, (file) => {
         queue.push(() => util.promisify(fs.lstat)(file).then((stats) => {
             file = file.substring(fileDir.length + 1);
             if (process.platform === "win32") {
-                file = file.replace("\\", "/");
+                file = file.replace(/\\/g, "/");
             }
 
-            res.write(`<a href="/${file.replace("\"", "&quot;")}">/${file}</a> - ${prettysize(stats.size, false, false, stats.size >= 1024 ? 2 : 0)}<br />`);
+            res.write(`<a href="/${file.replace(/"/g, "&quot;")}">/${file}</a> - ${prettysize(stats.size, false, false, stats.size >= 1024 ? 2 : 0)}<br />`);
         }).catch(() => {
             res.write(`${file}<br />`);
         }));
@@ -106,7 +106,7 @@ app.get(/.*\/$/, (req, res) => {
             // Go to the parent directory if we're not in the root.
             if (req.path !== "/") {
                 queue.push(() => {
-                    res.write(`<a href="${path.join("/", req.path, "..").replace("\"", "&quot;")}">Parent Directory</a><br />`);
+                    res.write(`<a href="${path.posix.join("/", req.path, "..", "/").replace(/"/g, "&quot;")}">Parent Directory</a><br />`);
                 });
             }
 
@@ -116,7 +116,7 @@ app.get(/.*\/$/, (req, res) => {
 
                 queue.push(() => util.promisify(fs.lstat)(obj).then((stats) => {
                     if (stats.isDirectory()) {
-                        res.write(`<a href="${path.join("/", req.path, file).replace("\"", "&quot;")}/">${file}/</a><br />`);
+                        res.write(`<a href="${path.posix.join("/", req.path, file).replace(/"/g, "&quot;")}/">${file}/</a><br />`);
                     }
                 }).catch(() => {
                     res.write(`${file}<br />`);
@@ -129,7 +129,7 @@ app.get(/.*\/$/, (req, res) => {
 
                 queue.push(() => util.promisify(fs.lstat)(obj).then((stats) => {
                     if (stats.isFile()) {
-                        res.write(`<a href="${path.join("/", req.path, file).replace("\"", "&quot;")}">${file}</a> - ${prettysize(stats.size, false, false, stats.size >= 1024 ? 2 : 0)}<br />`);
+                        res.write(`<a href="${path.posix.join("/", req.path, file).replace(/"/g, "&quot;")}">${file}</a> - ${prettysize(stats.size, false, false, stats.size >= 1024 ? 2 : 0)}<br />`);
                     }
                 }).catch(() => {
                     res.write(`${file}<br />`);
