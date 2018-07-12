@@ -153,7 +153,7 @@ app.get(/.*\/$/, (req, res) => {
 // Retrieve a file.
 app.get(/.*[^/]$/, (req, res) => {
     // Get the filename.
-    const file = path.join(__dirname, "files", req.path);
+    const file = path.join(__dirname, "files", decodeURIComponent(req.path));
 
     // Check if the file exists.
     util.promisify(fs.access)(file, fs.F_OK).then(() => {
