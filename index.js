@@ -181,7 +181,7 @@ app.get(/.*[^/]$/, (req, res) => {
     }).catch(() => {
         // File does not exist.
         res.status(404);
-        res.write("404 File not found.");
+        res.write(`404 File ${decodeURIComponent(req.path)} not found.`);
         res.end();
     });
 });
