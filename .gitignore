@@ -57,3 +57,8 @@ typings/
 # dotenv environment variables file
 .env
 
+# secrets
+secrets/**
+
+# vscode
+.vscode/**

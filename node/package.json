@@ -1,6 +1,6 @@
 {
     "name": "tis.roncli.com",
-    "version": "1.0.1",
+    "version": "2.0.0",
     "description": "The site that allows users to search old Trax in Space 1 files.",
     "homepage": "https://github.com/roncli/tis.roncli.com",
     "bugs": {
@@ -18,10 +18,10 @@
     },
     "license": "MIT",
     "dependencies": {
-        "compression": "1.7.3",
-        "express": "4.16.4",
-        "find": "0.2.9",
-        "morgan": "1.9.1",
+        "compression": "1.7.4",
+        "express": "4.17.1",
+        "find": "0.3.0",
+        "morgan": "1.10.0",
         "prettysize": "2.0.0"
     }
 }

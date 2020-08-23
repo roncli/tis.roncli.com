@@ -13,6 +13,14 @@ To run the application, set your `port` environment variable to the port you wis
 
 ## Version History
 
+### 2.0.0 - 8/25/2020
+
+* Updated packages, and updated for use in Docker.
+
+### 1.0.1 - 1/4/2019
+
+* Updated packages.
+
 ### 1.0.0 - 5/5/2018
 
 * Initial version.

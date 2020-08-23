@@ -6,15 +6,13 @@ const fs = require("fs"),
     compression = require("compression"),
     express = require("express"),
     find = require("find"),
-    morgan = require("morgan"),
     prettysize = require("prettysize"),
 
-    morganExtensions = require("./morgan-extensions"),
     Queue = require("./queue"),
 
     app = express(),
     downloads = {},
-    port = process.env.PORT || 15351;
+    port = process.env.PORT || 3030;
 
 // Remove powered by.
 app.disable("x-powered-by");
@@ -28,12 +26,15 @@ app.use((req, res, next) => {
 // Use compression!
 app.use(compression());
 
-// Setup morgan logging.
-morganExtensions(morgan);
-app.use(morgan(":colorstatus \x1b[30m\x1b[1m:method\x1b[0m :url\x1b[30m\x1b[1m:newline    Date :date[iso]    IP :req[ip]    Time :colorresponse ms"));
+app.get(/^\/?robots.txt$/, (req, res) => {
+    res.status(200);
+    res.write(`User-agent: *
+Disallow: /`);
+    res.end();
+});
 
 // Search the files.
-app.get(/search/, (req, res) => {
+app.get(/^\/?search$/, (req, res) => {
     // "text" is a required parameter, also don't allow HTML tags.
     if (!req.query.text || req.query.text.indexOf("<") !== -1) {
         res.status(400);
