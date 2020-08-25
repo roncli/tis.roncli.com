@@ -7,7 +7,7 @@ More generally, this site basically functions as a file repository.  Files are l
 
 If you use this for yourself, you'll want to go into the `/docker-compose.yml`, `/node/package.json`, and `/node/index.js` files and the `/node/html` directory, remove the tis.roncli.com-specific content, and replace it with your own.
 
-You need three files under the `/secrets` directory: `FILES_URI`, `FILES_USERNAME`, and `FILES_PASSWORD`.  These should respectively contain the file share URI (Example, `//your-storage-url.file.core.windows.net/your-share-name`), the name of the resource, and the storage key.
+You need three files under the `/secrets` directory: `FILES_URI`, `FILES_USERNAME`, and `FILES_PASSWORD`.  These correspond to your Azure Storage file share, and should respectively contain the file share URI (Example, `//your-storage-url.file.core.windows.net/your-share-name`), the name of the resource, and the storage key.
 
 To run the application, have Docker and Docker Compose installed, and run `docker-compose up -d`.
 
