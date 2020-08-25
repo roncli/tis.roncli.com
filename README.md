@@ -1,7 +1,7 @@
 # tis.roncli.com
 The site that allows users to search old Trax in Space 1 files.  You can see this site in action at [http://tis.roncli.com](http://tis.roncli.com).
 
-More generally, this site basically functions as a file repository.  Files are laoded in via an Azure Storage file share, and any accomponying html that is to be displayed on a directory's page is under the corresponding path in the `/node/html` directory and is listed as `index.htm`.
+More generally, this site basically functions as a file repository.  Files are loaded in via an Azure Storage file share, and any accompanying html that is to be displayed on a directory's page is under the corresponding path in the `/node/html` directory and is listed as `index.htm`.
 
 ## Usage
 
