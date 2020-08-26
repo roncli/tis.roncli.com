@@ -2,18 +2,39 @@ version: "3.7"
 
 services:
 
+  logging:
+    container_name: tisronclicom-logging
+    build: ./logging
+    ports:
+      - "12201:12201/udp"
+    environment:
+      PORT: 12201
+      APPINSIGHTS_INSTRUMENTATIONKEY: /run/secrets/APPINSIGHTS_INSTRUMENTATIONKEY
+    secrets:
+      - APPINSIGHTS_INSTRUMENTATIONKEY
+    restart: always
+    entrypoint: /var/logging/start.sh
+
   node:
     container_name: tisronclicom-node
     build: ./node
+    depends_on:
+      - logging
     networks:
       - tis.roncli.com-network
+    logging:
+      driver: "gelf"
+      options:
+        gelf-address: "udp://localhost:12201"
     environment:
       PORT: 3030
       NODE_ENV: production
+      APPINSIGHTS_INSTRUMENTATIONKEY: /run/secrets/APPINSIGHTS_INSTRUMENTATIONKEY
       FILES_URI: /run/secrets/FILES_URI
       FILES_USERNAME: /run/secrets/FILES_USERNAME
       FILES_PASSWORD: /run/secrets/FILES_PASSWORD
     secrets:
+      - APPINSIGHTS_INSTRUMENTATIONKEY
       - FILES_URI
       - FILES_USERNAME
       - FILES_PASSWORD
@@ -26,11 +47,16 @@ services:
     build: ./nginx
     depends_on:
       - node
+      - logging
     networks:
       - tis.roncli.com-network
     ports:
       - "80:80"
       - "443:443"
+    logging:
+      driver: "gelf"
+      options:
+        gelf-address: "udp://localhost:12201"
     environment:
       DOMAIN: tis.roncli.com
       PROXY_PORT: 3030
@@ -46,6 +72,11 @@ services:
     build: ./certbot
     depends_on:
       - nginx
+      - logging
+    logging:
+      driver: "gelf"
+      options:
+        gelf-address: "udp://localhost:12201"
     environment:
       DOMAIN: tis.roncli.com
       EMAIL: roncli@roncli.com
@@ -65,6 +96,8 @@ volumes:
   nginx-work:
 
 secrets:
+  APPINSIGHTS_INSTRUMENTATIONKEY:
+    file: ./secrets/APPINSIGHTS_INSTRUMENTATIONKEY
   FILES_URI:
     file: ./secrets/FILES_URI
   FILES_USERNAME:

@@ -1,17 +1,25 @@
 # tis.roncli.com
 The site that allows users to search old Trax in Space 1 files.  You can see this site in action at [http://tis.roncli.com](http://tis.roncli.com).
 
-More generally, this site basically functions as a file repository.  Files are loaded in via an Azure Storage file share, and any accompanying html that is to be displayed on a directory's page is under the corresponding path in the `/node/html` directory and is listed as `index.htm`.
+More generally, this site basically functions as a file repository.  Azure Application Insights is used for logging.  Files are loaded in via an Azure Storage file share, and any accompanying html that is to be displayed on a directory's page is under the corresponding path in the `/node/html` directory and is listed as `index.htm`.
 
 ## Usage
 
 If you use this for yourself, you'll want to go into the `/docker-compose.yml`, `/node/package.json`, and `/node/index.js` files and the `/node/html` directory, remove the tis.roncli.com-specific content, and replace it with your own.
 
-You need three files under the `/secrets` directory: `FILES_URI`, `FILES_USERNAME`, and `FILES_PASSWORD`.  These correspond to your Azure Storage file share, and should respectively contain the file share URI (Example, `//your-storage-url.file.core.windows.net/your-share-name`), the name of the resource, and the storage key.
+You need four files under the `/secrets` directory: `APPINSIGHTS_INSTRUMENTATIONKEY`, `FILES_URI`, `FILES_USERNAME`, and `FILES_PASSWORD`.  These correspond respectively to your Azure Application Insights instrumentation key, your Azure Storage file share URI (Example, `//your-storage-url.file.core.windows.net/your-share-name`), your Azure Storage resource name, and your Azure Storage key.
 
-To run the application, have Docker and Docker Compose installed, and run `docker-compose up -d`.
+To run the application, have Docker and Docker Compose installed, and run `docker-compose up --build -d`.
 
 ## Version History
+
+### 2.0.1 - 8/27/2020
+
+* Added Application Insights logging via the logging container, which is a gelf server that Docker can use to log console messages.  Application Insights is now required to function.
+* Update nginx container for extended logging.
+* Fixed bug with IP address trying to forward to the SSL version of the IP address, now it forwards to the SSL version of the domain.
+* Always create and copy the nginx config, regardless if it already exists.
+* Refactor of index.js in the node container, includes Application Insights logging for exceptions.
 
 ### 2.0.0 - 8/25/2020
 

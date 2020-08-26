@@ -18,16 +18,27 @@ then
     PROXY_PORT=3030
 fi
 
-# Create the nginx conf if it doesn't exist.
-if [ ! -f /var/nginx/work/nginx.conf ];
-then
-    echo "Creating nginx.conf..."
-    /bin/sh -c 'echo "
+# Create the nginx conf.
+echo "Creating nginx.conf..."
+/bin/sh -c $'echo "
 events {
     worker_connections 1024;
 }
 
 http {
+    map \$time_iso8601 \$time_iso8601_p1 {
+        ~([^+]+) \$1;
+    }
+    map \$time_iso8601 \$time_iso8601_p2 {
+        ~\\\+([0-9:]+)\$ \$1;
+    }
+    map \$msec \$millisec {
+        ~\\\.([0-9]+)\$ \$1;
+    }
+
+    log_format fullformat \'\$remote_addr - \$remote_user [\$time_iso8601_p1.\$millisec+\$time_iso8601_p2] \$server_name \$server_port \\\"\$request\\\" \$status \$body_bytes_sent \$request_time \\\"\$http_referer\\\" \\\"\$http_user_agent\\\"\';
+    access_log /var/log/nginx/access.log fullformat;
+
     server {
         listen 80;
         server_name $DOMAIN;
@@ -38,7 +49,7 @@ http {
         }
 
         location / {
-            return 301 https://\$host\$request_uri;
+            return 301 https://$DOMAIN\$request_uri;
         }
     }
 
@@ -64,8 +75,9 @@ http {
     }
 }
 " > /var/nginx/work/nginx.conf'
-    cp /var/nginx/work/nginx.conf /etc/nginx/nginx.conf
-fi
+
+# Copy the nginx config.
+cp /var/nginx/work/nginx.conf /etc/nginx/nginx.conf
 
 # Create the well-known dir.
 mkdir -p /var/certbot/work/.well-known

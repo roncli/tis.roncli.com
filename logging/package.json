@@ -1,7 +1,7 @@
 {
-    "name": "tis.roncli.com-node",
+    "name": "tis.roncli.com-logging",
     "version": "2.0.1",
-    "description": "The site that allows users to search old Trax in Space 1 files.",
+    "description": "gelf logging for tis.roncli.com.",
     "homepage": "https://github.com/roncli/tis.roncli.com",
     "bugs": {
         "url": "https://github.com/roncli/tis.roncli.com/issues"
@@ -19,10 +19,6 @@
     "license": "MIT",
     "dependencies": {
         "applicationinsights": "1.8.5",
-        "compression": "1.7.4",
-        "express": "4.17.1",
-        "find": "0.3.0",
-        "morgan": "1.10.0",
-        "prettysize": "2.0.0"
+        "graygelf": "2.0.0"
     }
 }
