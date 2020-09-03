@@ -1,6 +1,6 @@
 {
     "name": "tis.roncli.com-logging",
-    "version": "2.0.1",
+    "version": "2.0.2",
     "description": "gelf logging for tis.roncli.com.",
     "homepage": "https://github.com/roncli/tis.roncli.com",
     "bugs": {
@@ -20,5 +20,8 @@
     "dependencies": {
         "applicationinsights": "1.8.5",
         "graygelf": "2.0.0"
+    },
+    "devDependencies": {
+        "@types/node": "14.6.3"
     }
 }

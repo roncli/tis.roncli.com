@@ -13,8 +13,10 @@ const fs = require("fs"),
     Queue = require("./queue"),
 
     app = express(),
-    downloads = {},
     port = process.env.PORT || 3030;
+
+/** @type {Object<string, {count: number, last: Date}>} */
+const downloads = {};
 
 //   ###              #
 //    #               #
@@ -89,7 +91,7 @@ class Index {
                     try {
                         stats = await util.promisify(fs.lstat)(file);
                     } catch (err) {
-                        appInsights.defaultClient.trackException({tagOverrides: {"ai.location.ip": req.headers.ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", path: req.path, file, route: "^/?search$/"}, exception: err, message: "Error while looping through searched files."});
+                        appInsights.defaultClient.trackException({tagOverrides: {"ai.location.ip": req.headers.ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through searched files.", path: req.path, file, route: "^/?search$/"}, exception: err});
                         return;
                     }
 
@@ -117,7 +119,7 @@ class Index {
             // Check if the directory exists, and that it actually a directory.
             let files;
             try {
-                await util.promisify(fs.access)(fileDir, fs.F_OK);
+                await util.promisify(fs.access)(fileDir, fs.constants.F_OK);
                 files = await util.promisify(fs.readdir)(fileDir);
             } catch (err) {
                 // Directory does not exist.
@@ -137,7 +139,7 @@ class Index {
 
             let data;
             try {
-                await util.promisify(fs.access)(html, fs.F_OK);
+                await util.promisify(fs.access)(html, fs.constants.F_OK);
                 data = await util.promisify(fs.readFile)(html);
             } catch {
             } finally {
@@ -163,7 +165,7 @@ class Index {
                 try {
                     stats = await util.promisify(fs.lstat)(obj);
                 } catch (err) {
-                    appInsights.defaultClient.trackException({tagOverrides: {"ai.location.ip": req.headers.ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", path: req.path, file, filename: obj, route: ".*/$"}, exception: err, message: "Error while looping through directories."});
+                    appInsights.defaultClient.trackException({tagOverrides: {"ai.location.ip": req.headers.ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through directories.", path: req.path, file, filename: obj, route: ".*/$"}, exception: err});
                     return;
                 }
 
@@ -180,7 +182,7 @@ class Index {
                 try {
                     stats = await util.promisify(fs.lstat)(obj);
                 } catch (err) {
-                    appInsights.defaultClient.trackException({tagOverrides: {"ai.location.ip": req.headers.ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", path: req.path, file, filename: obj, route: ".*/$"}, exception: err, message: "Error while looping through files."});
+                    appInsights.defaultClient.trackException({tagOverrides: {"ai.location.ip": req.headers.ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through files.", path: req.path, file, filename: obj, route: ".*/$"}, exception: err});
                     return;
                 }
 
@@ -201,7 +203,7 @@ class Index {
 
             // Check if the file exists.
             try {
-                await util.promisify(fs.access)(file, fs.F_OK);
+                await util.promisify(fs.access)(file, fs.constants.F_OK);
             } catch (err) {
                 // File does not exist.
                 res.status(404);
@@ -214,7 +216,7 @@ class Index {
             if (!downloads[req.headers.ip]) {
                 downloads[req.headers.ip] = {count: 0, last: new Date()};
             }
-            if (new Date() - downloads[req.headers.ip].last >= 12 * 60 * 60 * 1000) {
+            if (new Date().getTime() - downloads[req.headers.ip].last.getTime() >= 12 * 60 * 60 * 1000) {
                 downloads[req.headers.ip].count = 0;
             }
 

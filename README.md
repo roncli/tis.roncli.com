@@ -13,6 +13,13 @@ To run the application, have Docker and Docker Compose installed, and run `docke
 
 ## Version History
 
+### 2.0.2 - 9/3/2020
+
+* Added tsconfig.json files.
+* Added and updated dependencies.
+* Fixed some Application Insights calls.
+* Fixed some `fs` constants.
+
 ### 2.0.1 - 8/27/2020
 
 * Added Application Insights logging via the logging container, which is a gelf server that Docker can use to log console messages.  Application Insights is now required to function.
