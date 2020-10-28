@@ -65,8 +65,10 @@ class Index {
 
         // Search the files.
         app.get(/^\/?search$/, (req, res) => {
+            const text = req.query.text && req.query.text.toString() || "";
+
             // "text" is a required parameter, also don't allow HTML tags.
-            if (!req.query.text || req.query.text.indexOf("<") !== -1) {
+            if (!req.query.text || text.indexOf("<") !== -1) {
                 res.status(400);
                 res.write("400 Bad Request");
                 res.end();
@@ -76,7 +78,7 @@ class Index {
             // This will be a 200, begin writing the HTML.
             res.status(200);
             res.write("<html><head><style>* {font-family: Arial, sans-serif;}</style></head><body>");
-            res.write(`<h1>tis.roncli.com</h1><a href="/">Home</a><br /><br /><form action="/search" method="GET"><input type="text" name="text" value="${req.query.text.replace(/"/g, "&quot;")}" /> <input type="submit" value="Search"></form><h2>Search results: ${req.query.text}</h2>`);
+            res.write(`<h1>tis.roncli.com</h1><a href="/">Home</a><br /><br /><form action="/search" method="GET"><input type="text" name="text" value="${text.replace(/"/g, "&quot;")}" /> <input type="submit" value="Search"></form><h2>Search results: ${req.query.text}</h2>`);
 
             // Get the files directory.
             const fileDir = path.join(__dirname, "files");
@@ -85,13 +87,14 @@ class Index {
             const queue = new Queue();
 
             // Loop through the files found and output them.
-            find.eachfile(new RegExp(req.query.text, "i"), fileDir, (file) => {
+            const ip = req.headers.ip.toString();
+            find.eachfile(new RegExp(text, "i"), fileDir, (file) => {
                 queue.push(async () => {
                     let stats;
                     try {
                         stats = await util.promisify(fs.lstat)(file);
                     } catch (err) {
-                        appInsights.defaultClient.trackException({tagOverrides: {"ai.location.ip": req.headers.ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through searched files.", path: req.path, file, route: "^/?search$/"}, exception: err});
+                        appInsights.defaultClient.trackException({tagOverrides: {"ai.location.ip": ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through searched files.", path: req.path, file, route: "^/?search$/"}, exception: err});
                         return;
                     }
 
@@ -158,6 +161,7 @@ class Index {
             }
 
             // Loop through the files to find all of the directories and output them.
+            const ip = req.headers.ip.toString();
             for (const file of files) {
                 const obj = path.join(fileDir, file);
 
@@ -165,7 +169,7 @@ class Index {
                 try {
                     stats = await util.promisify(fs.lstat)(obj);
                 } catch (err) {
-                    appInsights.defaultClient.trackException({tagOverrides: {"ai.location.ip": req.headers.ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through directories.", path: req.path, file, filename: obj, route: ".*/$"}, exception: err});
+                    appInsights.defaultClient.trackException({tagOverrides: {"ai.location.ip": ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through directories.", path: req.path, file, filename: obj, route: ".*/$"}, exception: err});
                     return;
                 }
 
@@ -182,7 +186,7 @@ class Index {
                 try {
                     stats = await util.promisify(fs.lstat)(obj);
                 } catch (err) {
-                    appInsights.defaultClient.trackException({tagOverrides: {"ai.location.ip": req.headers.ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through files.", path: req.path, file, filename: obj, route: ".*/$"}, exception: err});
+                    appInsights.defaultClient.trackException({tagOverrides: {"ai.location.ip": ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through files.", path: req.path, file, filename: obj, route: ".*/$"}, exception: err});
                     return;
                 }
 
@@ -213,23 +217,24 @@ class Index {
             }
 
             // Ensure that the IP address is logging the number of downloads, and reset it if it's been more than 12 hours since their last download.
-            if (!downloads[req.headers.ip]) {
-                downloads[req.headers.ip] = {count: 0, last: new Date()};
+            const ip = req.headers.ip.toString();
+            if (!downloads[ip]) {
+                downloads[ip] = {count: 0, last: new Date()};
             }
-            if (new Date().getTime() - downloads[req.headers.ip].last.getTime() >= 12 * 60 * 60 * 1000) {
-                downloads[req.headers.ip].count = 0;
+            if (new Date().getTime() - downloads[ip].last.getTime() >= 12 * 60 * 60 * 1000) {
+                downloads[ip].count = 0;
             }
 
-            if (downloads[req.headers.ip].count >= 50) {
+            if (downloads[ip].count >= 50) {
                 // Send a 429 if they've been downloading too much.
                 res.status(429);
                 res.write("429 Too many requests, you are limited to 50 downloads in a 12 hour period.  Please contact roncli@roncli.com if you need to exceed this limit.");
                 res.end();
             } else {
                 // Update the download count.
-                downloads[req.headers.ip].count++;
-                downloads[req.headers.ip].last = new Date();
-                appInsights.defaultClient.trackMetric({tagOverrides: {"ai.location.ip": req.headers.ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", ipaddress: req.headers.ip}, name: "Downloads", value: downloads[req.headers.ip].count});
+                downloads[ip].count++;
+                downloads[ip].last = new Date();
+                appInsights.defaultClient.trackMetric({tagOverrides: {"ai.location.ip": ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", ipaddress: ip}, name: "Downloads", value: downloads[ip].count});
 
                 // Download the file.
                 res.download(file, () => {});
