@@ -45,7 +45,7 @@ class Docker {
 
         let currentMinute = -1;
 
-        while (true) {
+        while (true) { // eslint-disable-line no-constant-condition
             try {
                 const stats = await this.getStats();
 
@@ -187,6 +187,7 @@ class Docker {
         const container = this.dockerode.getContainer(id),
             stats = await container.stats({stream: false});
 
+        // @ts-ignore: stats.preread exists, but is not in the @types/dockerode typings.
         if (!stats || new Date(stats.read).getTime() === new Date(stats.preread).getTime()) {
             return void 0;
         }
