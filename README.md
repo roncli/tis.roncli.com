@@ -16,7 +16,7 @@ To run the application, have Docker and Docker Compose installed, and run `docke
 ### 2.0.3 - 5/2/2021
 
 * Increased download limit to 1000 per 12 hours per IP.
-* Added optional Docker metris logged to Application Insights.
+* Added optional Docker metrics logged to Application Insights.
 
 ### 2.0.2 - 9/3/2020
 
