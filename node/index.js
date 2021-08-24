@@ -13,7 +13,9 @@ const fs = require("fs"),
     Queue = require("./queue"),
 
     app = express(),
-    port = process.env.PORT || 3030;
+    port = process.env.PORT || 3030,
+
+    maxRequests = 1000;
 
 /** @type {Object<string, {count: number, last: Date}>} */
 const downloads = {};
@@ -239,10 +241,10 @@ class Index {
                 downloads[ip].count = 0;
             }
 
-            if (downloads[ip].count >= 1000) {
+            if (downloads[ip].count >= maxRequests) {
                 // Send a 429 if they've been downloading too much.
                 res.status(429);
-                res.write("429 Too many requests, you are limited to 1000 downloads in a 12 hour period.  Please contact roncli@roncli.com if you need to exceed this limit.");
+                res.write(`429 Too many requests, you are limited to ${maxRequests} downloads in a 12 hour period.  Please contact roncli@roncli.com if you need to exceed this limit.`);
                 res.end();
             } else {
                 // Update the download count.
