@@ -3,8 +3,7 @@
 # Validation.
 if [ ! $APPINSIGHTS_INSTRUMENTATIONKEY ];
 then
-    echo "Error: You must include an Application Insights instrumentation key.  Please set the APPINSIGHTS_INSTRUMENTATIONKEY environment variable to the instrumentation key you are trying to connect to." >&2
-    exit 1
+    echo "Warning: Application Insights is not setup.  Application will log to console."
 fi
 
 # Mount Azure Storage file share.

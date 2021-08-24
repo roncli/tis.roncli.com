@@ -42,8 +42,10 @@ class Index {
      */
     static startup() {
         // Setup application insights.
-        appInsights.setup().setAutoCollectRequests(false);
-        appInsights.start();
+        if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
+            appInsights.setup().setAutoCollectRequests(false);
+            appInsights.start();
+        }
 
         // Remove powered by.
         app.disable("x-powered-by");
@@ -94,7 +96,11 @@ class Index {
                     try {
                         stats = await util.promisify(fs.lstat)(file);
                     } catch (err) {
-                        appInsights.defaultClient.trackException({tagOverrides: {"ai.location.ip": ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through searched files.", path: req.path, file, route: "^/?search$/"}, exception: err});
+                        if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
+                            appInsights.defaultClient.trackException({tagOverrides: {"ai.location.ip": ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through searched files.", path: req.path, file, route: "^/?search$/"}, exception: err});
+                        } else {
+                            console.log(err);
+                        }
                         return;
                     }
 
@@ -169,7 +175,11 @@ class Index {
                 try {
                     stats = await util.promisify(fs.lstat)(obj);
                 } catch (err) {
-                    appInsights.defaultClient.trackException({tagOverrides: {"ai.location.ip": ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through directories.", path: req.path, file, filename: obj, route: ".*/$"}, exception: err});
+                    if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
+                        appInsights.defaultClient.trackException({tagOverrides: {"ai.location.ip": ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through directories.", path: req.path, file, filename: obj, route: ".*/$"}, exception: err});
+                    } else {
+                        console.log(err);
+                    }
                     return;
                 }
 
@@ -186,7 +196,11 @@ class Index {
                 try {
                     stats = await util.promisify(fs.lstat)(obj);
                 } catch (err) {
-                    appInsights.defaultClient.trackException({tagOverrides: {"ai.location.ip": ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through files.", path: req.path, file, filename: obj, route: ".*/$"}, exception: err});
+                    if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
+                        appInsights.defaultClient.trackException({tagOverrides: {"ai.location.ip": ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through files.", path: req.path, file, filename: obj, route: ".*/$"}, exception: err});
+                    } else {
+                        console.log(err);
+                    }
                     return;
                 }
 
@@ -234,7 +248,9 @@ class Index {
                 // Update the download count.
                 downloads[ip].count++;
                 downloads[ip].last = new Date();
-                appInsights.defaultClient.trackMetric({tagOverrides: {"ai.location.ip": ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", ipaddress: ip}, name: "Downloads", value: downloads[ip].count});
+                if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
+                    appInsights.defaultClient.trackMetric({tagOverrides: {"ai.location.ip": ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", ipaddress: ip}, name: "Downloads", value: downloads[ip].count});
+                }
 
                 // Download the file.
                 res.download(file, () => {});
