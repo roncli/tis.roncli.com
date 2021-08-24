@@ -13,6 +13,11 @@ To run the application, have Docker and Docker Compose installed, and run `docke
 
 ## Version History
 
+### 2.0.4 - 8/24/2021
+
+* Make Azure File Storage optional.  If not using Azure File Storage, just dump all the files to be available for download into `/node/files/`.
+* Make Azure Application Insights optional.
+
 ### 2.0.3 - 5/2/2021
 
 * Increased download limit to 1000 per 12 hours per IP.
