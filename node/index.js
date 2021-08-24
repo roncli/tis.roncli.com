@@ -10,6 +10,7 @@ const fs = require("fs"),
     find = require("find"),
     prettysize = require("prettysize"),
 
+    pjson = require("./package.json"),
     Queue = require("./queue"),
 
     app = express(),
@@ -81,7 +82,7 @@ class Index {
 
             // This will be a 200, begin writing the HTML.
             res.status(200);
-            res.write("<html><head><style>* {font-family: Arial, sans-serif;}</style></head><body>");
+            res.write("<html><head><meta charset=\"utf-8\"><style>* {font-family: Arial, sans-serif;}</style></head><body>");
             res.write(`<h1>tis.roncli.com</h1><a href="/">Home</a><br /><br /><form action="/search" method="GET"><input type="text" name="text" value="${text.replace(/"/g, "&quot;")}" /> <input type="submit" value="Search"></form><h2>Search results: ${req.query.text}</h2>`);
 
             // Get the files directory.
@@ -116,7 +117,7 @@ class Index {
             }).end(() => {
                 // Finish up the HTML document and send.
                 queue.push(() => {
-                    res.write("</body></html>");
+                    res.write(`<br /><br />Website Version ${pjson.version}, ©2004-${new Date().getUTCFullYear()} roncli Productions<br />Bugs? <a href="https://github.com/roncli/tis.roncli.com/issues" target="_blank">Report on GitHub</a></body></html>`);
                     res.end();
                 });
             });
@@ -142,7 +143,7 @@ class Index {
 
             // This will be a 200, begin writing the HTML.
             res.status(200);
-            res.write("<html><head><style>* {font-family: Arial, sans-serif;}</style></head><body>");
+            res.write("<html><head><meta charset=\"utf-8\"><style>* {font-family: Arial, sans-serif;}</style></head><body>");
             res.write(`<h1>tis.roncli.com</h1><a href="/">Home</a><br /><br /><form action="/search" method="GET"><input type="text" name="text" /> <input type="submit" value="Search"></form><h2>Current directory: ${req.path}</h2>`);
 
             // Get the path of the HTML file to be displayed for this directory.
@@ -212,7 +213,7 @@ class Index {
             }
 
             // Finish up the HTML document and send.
-            res.write("</body></html>");
+            res.write(`<br /><br />Website Version ${pjson.version}, ©2004-${new Date().getUTCFullYear()} roncli Productions<br />Bugs? <a href="https://github.com/roncli/tis.roncli.com/issues" target="_blank">Report on GitHub</a></body></html>`);
             res.end();
         });
 
