@@ -13,24 +13,28 @@ To run the application, have Docker and Docker Compose installed, and run `docke
 
 ## Version History
 
-### 2.0.4 - 8/24/2021
+### v2.0.5 - 10/3/2021
+
+* Package updates.
+
+### v2.0.4 - 8/24/2021
 
 * Make Azure File Storage optional.  If not using Azure File Storage, just dump all the files to be available for download into `/node/files/`.
 * Make Azure Application Insights optional.
 
-### 2.0.3 - 5/2/2021
+### v2.0.3 - 5/2/2021
 
 * Increased download limit to 1000 per 12 hours per IP.
 * Added optional Docker metrics logged to Application Insights.
 
-### 2.0.2 - 9/3/2020
+### v2.0.2 - 9/3/2020
 
 * Added tsconfig.json files.
 * Added and updated dependencies.
 * Fixed some Application Insights calls.
 * Fixed some `fs` constants.
 
-### 2.0.1 - 8/27/2020
+### v2.0.1 - 8/27/2020
 
 * Added Application Insights logging via the logging container, which is a gelf server that Docker can use to log console messages.  Application Insights is now required to function.
 * Update nginx container for extended logging.
@@ -38,14 +42,14 @@ To run the application, have Docker and Docker Compose installed, and run `docke
 * Always create and copy the nginx config, regardless if it already exists.
 * Refactor of index.js in the node container, includes Application Insights logging for exceptions.
 
-### 2.0.0 - 8/25/2020
+### v2.0.0 - 8/25/2020
 
 * Updated packages, and updated for use in Docker.
 
-### 1.0.1 - 1/4/2019
+### v1.0.1 - 1/4/2019
 
 * Updated packages.
 
-### 1.0.0 - 5/5/2018
+### v1.0.0 - 5/5/2018
 
 * Initial version.
