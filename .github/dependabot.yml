@@ -4,23 +4,35 @@ updates:
     directory: /certbot/
     schedule:
       interval: "daily"
+      time: "05:00"
+      timezone: "America/Los_Angeles"
   - package-ecosystem: "docker"
     directory: /logging/
     schedule:
       interval: "daily"
+      time: "05:00"
+      timezone: "America/Los_Angeles"
   - package-ecosystem: "docker"
     directory: /nginx/
     schedule:
       interval: "daily"
+      time: "05:00"
+      timezone: "America/Los_Angeles"
   - package-ecosystem: "docker"
     directory: /node/
     schedule:
       interval: "daily"
+      time: "05:00"
+      timezone: "America/Los_Angeles"
   - package-ecosystem: "npm"
     directory: /logging/
     schedule:
       interval: "daily"
+      time: "05:00"
+      timezone: "America/Los_Angeles"
   - package-ecosystem: "npm"
     directory: /node/
     schedule:
       interval: "daily"
+      time: "05:00"
+      timezone: "America/Los_Angeles"
