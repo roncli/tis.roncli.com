@@ -12,6 +12,9 @@ updates:
       interval: "daily"
       time: "05:00"
       timezone: "America/Los_Angeles"
+    ignore:
+      - dependency-name: "node"
+        versions: ["17.x", "18.x", "19.x", "20.x"]
   - package-ecosystem: "docker"
     directory: /nginx/
     schedule:
@@ -24,6 +27,9 @@ updates:
       interval: "daily"
       time: "05:00"
       timezone: "America/Los_Angeles"
+    ignore:
+      - dependency-name: "node"
+        versions: ["17.x", "18.x", "19.x", "20.x"]
   - package-ecosystem: "npm"
     directory: /logging/
     schedule:
