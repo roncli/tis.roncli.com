@@ -18,18 +18,18 @@
     },
     "license": "MIT",
     "dependencies": {
-        "applicationinsights": "2.3.4",
+        "applicationinsights": "2.3.5",
         "compression": "1.7.4",
-        "express": "4.18.1",
+        "express": "4.18.2",
         "find": "0.3.0",
         "morgan": "1.10.0",
         "prettysize": "2.0.0"
     },
     "devDependencies": {
-        "@babel/core": "7.18.13",
-        "@babel/eslint-parser": "7.18.9",
+        "@babel/core": "7.19.3",
+        "@babel/eslint-parser": "7.19.1",
         "@types/compression": "1.7.2",
-        "@types/express": "4.17.13",
-        "@types/node": "18.7.13"
+        "@types/express": "4.17.14",
+        "@types/node": "18.11.0"
     }
 }
