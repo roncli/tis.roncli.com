@@ -13,8 +13,11 @@ To run the application, have Docker and Docker Compose installed, and run `docke
 
 ## Version History
 
+### v2.0.13 - 8/1/2023
+* Package updates.
+
 ### v2.0.12 - 5/23/2023
-* Package update.
+* Package updates.
 
 ### v2.0.11 - 12/18/2022
 * Package updates.
