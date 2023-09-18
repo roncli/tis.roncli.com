@@ -30,6 +30,6 @@
         "@babel/eslint-parser": "7.22.15",
         "@types/compression": "1.7.3",
         "@types/express": "4.17.17",
-        "@types/node": "20.6.1"
+        "@types/node": "20.6.2"
     }
 }
