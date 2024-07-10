@@ -1,5 +1,5 @@
 # Get Node LTS Alpine.
-FROM node:20.10.0-alpine
+FROM node:20.15.1-alpine
 
 # Get packages.
 RUN apk update && apk add cifs-utils && apk add keyutils
