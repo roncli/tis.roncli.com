@@ -21,9 +21,7 @@
         "applicationinsights": "3.6.0",
         "compression": "1.8.0",
         "express": "5.1.0",
-        "find": "0.3.0",
-        "morgan": "1.10.0",
-        "prettysize": "2.0.0"
+        "find": "0.3.0"
     },
     "devDependencies": {
         "@eslint/js": "9.24.0",

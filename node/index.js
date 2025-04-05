@@ -8,7 +8,6 @@ const fs = require("fs"),
     compression = require("compression"),
     express = require("express"),
     find = require("find"),
-    prettysize = require("prettysize"),
 
     pjson = require("./package.json"),
     Queue = require("./queue"),
@@ -26,6 +25,27 @@ const downloads = {};
  * The primary class for the application.
  */
 class Index {
+    static #sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB"];
+
+    // MARK: static fileSize
+    /**
+     * Returns the size of a file.
+     * @param {number} size The size to convert.
+     * @returns {string} The size of the file in a human readable format.
+     */
+    static fileSize(size) {
+        let factors = 0;
+        while (size >= 1024 && factors < Index.#sizes.length - 1) {
+            size /= 1024;
+            factors++;
+        }
+        let unit = Index.#sizes[factors];
+        if (size === 1) {
+            unit = unit.substring(0, unit.length - 1);
+        }
+        return `${size.toFixed(factors === 0 ? 0 : 2)} ${unit}`;
+    }
+
     // MARK: static startup
     /**
      * Starts up the application.
@@ -99,7 +119,7 @@ class Index {
                         file = file.replace(/\\/g, "/");
                     }
 
-                    res.write(`<a href="/${file.replace(/"/g, "&quot;")}">/${file}</a> - ${prettysize(stats.size, false, false, stats.size >= 1024 ? 2 : 0)}<br />`);
+                    res.write(`<a href="/${file.replace(/"/g, "&quot;")}">/${file}</a> - ${Index.fileSize(stats.size)}<br />`);
                 });
             }).end(() => {
                 // Finish up the HTML document and send.
@@ -194,7 +214,7 @@ class Index {
                 }
 
                 if (stats.isFile()) {
-                    res.write(`<a href="${path.posix.join("/", req.path, file).replace(/"/g, "&quot;")}">${file}</a> - ${prettysize(stats.size, false, false, stats.size >= 1024 ? 2 : 0)}<br />`);
+                    res.write(`<a href="${path.posix.join("/", req.path, file).replace(/"/g, "&quot;")}">${file}</a> - ${Index.fileSize(stats.size)}<br />`);
                 }
             }
 
