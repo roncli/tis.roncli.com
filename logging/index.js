@@ -8,24 +8,12 @@ const appInsights = require("applicationinsights"),
 
 const docker = new Docker();
 
-//   ###              #
-//    #               #
-//    #    # ##    ## #   ###   #   #
-//    #    ##  #  #  ##  #   #   # #
-//    #    #   #  #   #  #####    #
-//    #    #   #  #  ##  #       # #
-//   ###   #   #   ## #   ###   #   #
+// MARK: class Index
 /**
  * The primary class for the application.
  */
 class Index {
-    //         #                 #
-    //         #                 #
-    //  ###   ###    ###  ###   ###   #  #  ###
-    // ##      #    #  #  #  #   #    #  #  #  #
-    //   ##    #    # ##  #      #    #  #  #  #
-    // ###      ##   # #  #       ##   ###  ###
-    //                                      #
+    // MARK: static startup
     /**
      * Starts up the application.
      * @returns {void}
@@ -46,7 +34,7 @@ class Index {
             if (logMatch.test(gelf.short_message)) {
                 const {groups: {ipaddress, remoteuser, date, servername, serverport, request, method, url, http, statuscode, bytessent, requesttime, referrer, useragent}} = logMatch.exec(gelf.short_message);
 
-                appInsights.defaultClient.trackRequest({tagOverrides: {"ai.location.ip": ipaddress}, name: `${method} ${url}`, url: `${serverport === "443" ? "https" : "http"}://${servername}${url}`, duration: +requesttime * 1000, resultCode: statuscode, success: successMatch.test(statuscode), time: new Date(date), properties: {application: "tis.roncli.com", container: gelf._container_name || "tisronclicom-logging", ipaddress, remoteuser, serverport: +serverport, request, http, bytessent: +bytessent, referrer, useragent}});
+                appInsights.defaultClient.trackRequest({name: `${method} ${url}`, url: `${serverport === "443" ? "https" : "http"}://${servername}${url}`, duration: +requesttime * 1000, resultCode: statuscode, success: successMatch.test(statuscode), time: new Date(date), properties: {application: "tis.roncli.com", container: gelf._container_name || "tisronclicom-logging", ipaddress, remoteuser, serverport: +serverport, request, http, bytessent: +bytessent, referrer, useragent}});
             } else {
                 appInsights.defaultClient.trackTrace({message: gelf.short_message, properties: {application: "tis.roncli.com", container: gelf._container_name || "tisronclicom-logging"}});
             }

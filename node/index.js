@@ -21,24 +21,12 @@ const fs = require("fs"),
 /** @type {Object<string, {count: number, last: Date}>} */
 const downloads = {};
 
-//   ###              #
-//    #               #
-//    #    # ##    ## #   ###   #   #
-//    #    ##  #  #  ##  #   #   # #
-//    #    #   #  #   #  #####    #
-//    #    #   #  #  ##  #       # #
-//   ###   #   #   ## #   ###   #   #
+// MARK: class Index
 /**
  * The primary class for the application.
  */
 class Index {
-    //         #                 #
-    //         #                 #
-    //  ###   ###    ###  ###   ###   #  #  ###
-    // ##      #    #  #  #  #   #    #  #  #  #
-    //   ##    #    # ##  #      #    #  #  #  #
-    // ###      ##   # #  #       ##   ###  ###
-    //                                      #
+    // MARK: static startup
     /**
      * Starts up the application.
      * @returns {void}
@@ -59,7 +47,7 @@ class Index {
             next();
         });
 
-        // Use compression!
+        // Use compression.
         app.use(compression());
 
         app.get(/^\/?robots.txt$/, (req, res) => {
@@ -92,7 +80,6 @@ class Index {
             const queue = new Queue();
 
             // Loop through the files found and output them.
-            const ip = req.headers.ip.toString();
             find.eachfile(new RegExp(text, "i"), fileDir, (file) => {
                 queue.push(async () => {
                     let stats;
@@ -100,7 +87,7 @@ class Index {
                         stats = await util.promisify(fs.lstat)(file);
                     } catch (err) {
                         if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
-                            appInsights.defaultClient.trackException({tagOverrides: {"ai.location.ip": ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through searched files.", path: req.path, file, route: "^/?search$/"}, exception: err});
+                            appInsights.defaultClient.trackException({properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through searched files.", path: req.path, file, route: "^/?search$/"}, exception: err});
                         } else {
                             console.log(err);
                         }
@@ -133,7 +120,7 @@ class Index {
             try {
                 await util.promisify(fs.access)(fileDir, fs.constants.F_OK);
                 files = await util.promisify(fs.readdir)(fileDir);
-            } catch (err) {
+            } catch {
                 // Directory does not exist.
                 res.status(404);
                 res.write("404 Directory not found.");
@@ -170,7 +157,6 @@ class Index {
             }
 
             // Loop through the files to find all of the directories and output them.
-            const ip = req.headers.ip.toString();
             for (const file of files) {
                 const obj = path.join(fileDir, file);
 
@@ -179,7 +165,7 @@ class Index {
                     stats = await util.promisify(fs.lstat)(obj);
                 } catch (err) {
                     if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
-                        appInsights.defaultClient.trackException({tagOverrides: {"ai.location.ip": ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through directories.", path: req.path, file, filename: obj, route: ".*/$"}, exception: err});
+                        appInsights.defaultClient.trackException({properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through directories.", path: req.path, file, filename: obj, route: ".*/$"}, exception: err});
                     } else {
                         console.log(err);
                     }
@@ -200,7 +186,7 @@ class Index {
                     stats = await util.promisify(fs.lstat)(obj);
                 } catch (err) {
                     if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
-                        appInsights.defaultClient.trackException({tagOverrides: {"ai.location.ip": ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through files.", path: req.path, file, filename: obj, route: ".*/$"}, exception: err});
+                        appInsights.defaultClient.trackException({properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through files.", path: req.path, file, filename: obj, route: ".*/$"}, exception: err});
                     } else {
                         console.log(err);
                     }
@@ -225,7 +211,7 @@ class Index {
             // Check if the file exists.
             try {
                 await util.promisify(fs.access)(file, fs.constants.F_OK);
-            } catch (err) {
+            } catch {
                 // File does not exist.
                 res.status(404);
                 res.write(`404 File ${decodeURIComponent(req.path)} not found.`);
@@ -252,7 +238,7 @@ class Index {
                 downloads[ip].count++;
                 downloads[ip].last = new Date();
                 if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
-                    appInsights.defaultClient.trackMetric({tagOverrides: {"ai.location.ip": ip}, properties: {application: "tis.roncli.com", container: "tisronclicom-node", ipaddress: ip}, name: "Downloads", value: downloads[ip].count});
+                    appInsights.defaultClient.trackMetric({properties: {application: "tis.roncli.com", container: "tisronclicom-node", ipaddress: ip}, name: "Downloads", value: downloads[ip].count});
                 }
 
                 // Download the file.
