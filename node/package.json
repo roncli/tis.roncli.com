@@ -18,7 +18,7 @@
     },
     "license": "MIT",
     "dependencies": {
-        "applicationinsights": "2.9.5",
+        "applicationinsights": "3.6.0",
         "compression": "1.7.5",
         "express": "5.1.0",
         "find": "0.3.0",
