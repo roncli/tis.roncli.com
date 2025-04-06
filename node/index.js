@@ -1,8 +1,7 @@
-const fs = require("fs"),
+const fs = require("fs/promises"),
     os = require("os"),
     path = require("path"),
     process = require("process"),
-    util = require("util"),
 
     appInsights = require("applicationinsights"),
     compression = require("compression"),
@@ -104,7 +103,7 @@ class Index {
                 queue.push(async () => {
                     let stats;
                     try {
-                        stats = await util.promisify(fs.lstat)(file);
+                        stats = await fs.lstat(file);
                     } catch (err) {
                         if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
                             appInsights.defaultClient.trackException({properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through searched files.", path: req.path, file, route: "^/?search$/"}, exception: err});
@@ -138,8 +137,8 @@ class Index {
             // Check if the directory exists, and that it actually a directory.
             let files;
             try {
-                await util.promisify(fs.access)(fileDir, fs.constants.F_OK);
-                files = await util.promisify(fs.readdir)(fileDir);
+                await fs.access(fileDir, fs.constants.F_OK);
+                files = await fs.readdir(fileDir);
             } catch {
                 // Directory does not exist.
                 res.status(404);
@@ -158,8 +157,8 @@ class Index {
 
             let data;
             try {
-                await util.promisify(fs.access)(html, fs.constants.F_OK);
-                data = await util.promisify(fs.readFile)(html);
+                await fs.access(html, fs.constants.F_OK);
+                data = await fs.readFile(html);
             } catch {
             } finally {
                 // If the HTML file exists, output it now.
@@ -182,7 +181,7 @@ class Index {
 
                 let stats;
                 try {
-                    stats = await util.promisify(fs.lstat)(obj);
+                    stats = await fs.lstat(obj);
                 } catch (err) {
                     if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
                         appInsights.defaultClient.trackException({properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through directories.", path: req.path, file, filename: obj, route: ".*/$"}, exception: err});
@@ -203,7 +202,7 @@ class Index {
 
                 let stats;
                 try {
-                    stats = await util.promisify(fs.lstat)(obj);
+                    stats = await fs.lstat(obj);
                 } catch (err) {
                     if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
                         appInsights.defaultClient.trackException({properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through files.", path: req.path, file, filename: obj, route: ".*/$"}, exception: err});
@@ -230,7 +229,7 @@ class Index {
 
             // Check if the file exists.
             try {
-                await util.promisify(fs.access)(file, fs.constants.F_OK);
+                await fs.access(file, fs.constants.F_OK);
             } catch {
                 // File does not exist.
                 res.status(404);
