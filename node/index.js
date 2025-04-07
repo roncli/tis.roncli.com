@@ -1,275 +1,56 @@
-const fs = require("fs/promises"),
-    os = require("os"),
-    path = require("path"),
-    process = require("process"),
-
-    appInsights = require("applicationinsights"),
-    compression = require("compression"),
+const compression = require("compression"),
     express = require("express"),
-    find = require("find"),
+    hotRouter = require("hot-router"),
+    Log = require("@roncli/node-application-insights-logger"),
+    path = require("path");
 
-    pjson = require("./package.json"),
-    Queue = require("./queue"),
-
-    app = express(),
-    port = process.env.PORT || 3030,
-
-    maxRequests = 1000;
-
-/** @type {Object<string, {count: number, last: Date}>} */
-const downloads = {};
-
-// MARK: class Index
-/**
- * The primary class for the application.
- */
-class Index {
-    static #sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB"];
-
-    // MARK: static fileSize
-    /**
-     * Returns the size of a file.
-     * @param {number} size The size to convert.
-     * @returns {string} The size of the file in a human readable format.
-     */
-    static fileSize(size) {
-        let factors = 0;
-        while (size >= 1024 && factors < Index.#sizes.length - 1) {
-            size /= 1024;
-            factors++;
-        }
-        let unit = Index.#sizes[factors];
-        if (size === 1) {
-            unit = unit.substring(0, unit.length - 1);
-        }
-        return `${size.toFixed(factors === 0 ? 0 : 2)} ${unit}`;
+// MARK: async function startup
+(async function startup() {
+    // Setup application insights.
+    if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
+        Log.setupApplicationInsights(process.env.APPINSIGHTS_INSTRUMENTATIONKEY, {application: "tis.roncli.com", container: "tisronclicom-node"});
     }
 
-    // MARK: static startup
-    /**
-     * Starts up the application.
-     * @returns {void}
-     */
-    static startup() {
-        // Setup application insights.
-        if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
-            appInsights.setup().setAutoCollectRequests(false);
-            appInsights.start();
-        }
+    console.log("Starting up...");
 
-        // Remove powered by.
-        app.disable("x-powered-by");
-
-        // Get a consistent IP address.
-        app.use((req, res, next) => {
-            req.headers.ip = req.headers["x-forwarded-for"] || req.ip || req.connection.remoteAddress;
-            next();
-        });
-
-        // Use compression.
-        app.use(compression());
-
-        app.get(/^\/?robots.txt$/, (req, res) => {
-            res.status(200);
-            res.write(`User-agent: *${os.EOL}Disallow: /`);
-            res.end();
-        });
-
-        // Search the files.
-        app.get(/^\/?search$/, (req, res) => {
-            const text = req.query.text && req.query.text.toString() || "";
-
-            // "text" is a required parameter, also don't allow HTML tags.
-            if (!req.query.text || text.indexOf("<") !== -1) {
-                res.status(400);
-                res.write("400 Bad Request");
-                res.end();
-                return;
-            }
-
-            // This will be a 200, begin writing the HTML.
-            res.status(200);
-            res.write("<html><head><meta charset=\"utf-8\"><style>body {background-color: #121212; color: #e0e0e0;} a {color: #82aaff;} a:visited {color: #bb86fc;} * {font-family: Arial, sans-serif;}</style></head><body>");
-            res.write(`<h1>tis.roncli.com</h1><a href="/">Home</a><br /><br /><form action="/search" method="GET"><input type="text" name="text" value="${text.replace(/"/g, "&quot;")}" /> <input type="submit" value="Search"></form><h2>Search results: ${req.query.text}</h2>`);
-
-            // Get the files directory.
-            const fileDir = path.join(__dirname, "files");
-
-            // Startup a new queue.
-            const queue = new Queue();
-
-            // Loop through the files found and output them.
-            find.eachfile(new RegExp(text, "i"), fileDir, (file) => {
-                queue.push(async () => {
-                    let stats;
-                    try {
-                        stats = await fs.lstat(file);
-                    } catch (err) {
-                        if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
-                            appInsights.defaultClient.trackException({properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through searched files.", path: req.path, file, route: "^/?search$/"}, exception: err});
-                        } else {
-                            console.log(err);
-                        }
-                        return;
-                    }
-
-                    file = file.substring(fileDir.length + 1);
-                    if (process.platform === "win32") {
-                        file = file.replace(/\\/g, "/");
-                    }
-
-                    res.write(`<a href="/${file.replace(/"/g, "&quot;")}">/${file}</a> - ${Index.fileSize(stats.size)}<br />`);
-                });
-            }).end(() => {
-                // Finish up the HTML document and send.
-                queue.push(() => {
-                    res.write(`<br /><br />Website Version ${pjson.version}, ©2004-${new Date().getUTCFullYear()} roncli Productions<br />Bugs? <a href="https://github.com/roncli/tis.roncli.com/issues" target="_blank">Report on GitHub</a></body></html>`);
-                    res.end();
-                });
-            });
-        });
-
-        // Retrieve a directory.
-        app.get(/.*\/$/, async (req, res) => {
-            // Get the directory of the file.
-            const fileDir = path.join(__dirname, "files", req.path);
-
-            // Check if the directory exists, and that it actually a directory.
-            let files;
-            try {
-                await fs.access(fileDir, fs.constants.F_OK);
-                files = await fs.readdir(fileDir);
-            } catch {
-                // Directory does not exist.
-                res.status(404);
-                res.write("404 Directory not found.");
-                res.end();
-                return;
-            }
-
-            // This will be a 200, begin writing the HTML.
-            res.status(200);
-            res.write("<html><head><meta charset=\"utf-8\"><style>body {background-color: #121212; color: #e0e0e0;} a {color: #82aaff;} a:visited {color: #bb86fc;} * {font-family: Arial, sans-serif;}</style></head><body>");
-            res.write(`<h1>tis.roncli.com</h1><a href="/">Home</a><br /><br /><form action="/search" method="GET"><input type="text" name="text" /> <input type="submit" value="Search"></form><h2>Current directory: ${req.path}</h2>`);
-
-            // Get the path of the HTML file to be displayed for this directory.
-            const html = path.join(__dirname, "html", req.path, "index.htm");
-
-            let data;
-            try {
-                await fs.access(html, fs.constants.F_OK);
-                data = await fs.readFile(html);
-            } catch {
-            } finally {
-                // If the HTML file exists, output it now.
-                if (data) {
-                    res.write(`${data}`);
-                }
-            }
-
-            // List the directory contents.
-            res.write("<h2>Directory contents:</h2>");
-
-            // Go to the parent directory if we're not in the root.
-            if (req.path !== "/") {
-                res.write(`<a href="${path.posix.join("/", req.path, "..", "/").replace(/"/g, "&quot;")}">Parent Directory</a><br />`);
-            }
-
-            // Loop through the files to find all of the directories and output them.
-            for (const file of files) {
-                const obj = path.join(fileDir, file);
-
-                let stats;
-                try {
-                    stats = await fs.lstat(obj);
-                } catch (err) {
-                    if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
-                        appInsights.defaultClient.trackException({properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through directories.", path: req.path, file, filename: obj, route: ".*/$"}, exception: err});
-                    } else {
-                        console.log(err);
-                    }
-                    return;
-                }
-
-                if (stats.isDirectory()) {
-                    res.write(`<a href="${path.posix.join("/", req.path, file).replace(/"/g, "&quot;")}/">${file}/</a><br />`);
-                }
-            }
-
-            // Loop through the files to find all of the files and output them.
-            for (const file of files) {
-                const obj = path.join(fileDir, file);
-
-                let stats;
-                try {
-                    stats = await fs.lstat(obj);
-                } catch (err) {
-                    if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
-                        appInsights.defaultClient.trackException({properties: {application: "tis.roncli.com", container: "tisronclicom-node", message: "Error while looping through files.", path: req.path, file, filename: obj, route: ".*/$"}, exception: err});
-                    } else {
-                        console.log(err);
-                    }
-                    return;
-                }
-
-                if (stats.isFile()) {
-                    res.write(`<a href="${path.posix.join("/", req.path, file).replace(/"/g, "&quot;")}">${file}</a> - ${Index.fileSize(stats.size)}<br />`);
-                }
-            }
-
-            // Finish up the HTML document and send.
-            res.write(`<br /><br />Website Version ${pjson.version}, ©2004-${new Date().getUTCFullYear()} roncli Productions<br />Bugs? <a href="https://github.com/roncli/tis.roncli.com/issues" target="_blank">Report on GitHub</a></body></html>`);
-            res.end();
-        });
-
-        // Retrieve a file.
-        app.get(/.*[^/]$/, async (req, res) => {
-            // Get the filename.
-            const file = path.join(__dirname, "files", decodeURIComponent(req.path));
-
-            // Check if the file exists.
-            try {
-                await fs.access(file, fs.constants.F_OK);
-            } catch {
-                // File does not exist.
-                res.status(404);
-                res.write(`404 File ${decodeURIComponent(req.path)} not found.`);
-                res.end();
-                return;
-            }
-
-            // Ensure that the IP address is logging the number of downloads, and reset it if it's been more than 12 hours since their last download.
-            const ip = req.headers.ip.toString();
-            if (!downloads[ip]) {
-                downloads[ip] = {count: 0, last: new Date()};
-            }
-            if (new Date().getTime() - downloads[ip].last.getTime() >= 12 * 60 * 60 * 1000) {
-                downloads[ip].count = 0;
-            }
-
-            if (downloads[ip].count >= maxRequests) {
-                // Send a 429 if they've been downloading too much.
-                res.status(429);
-                res.write(`429 Too many requests, you are limited to ${maxRequests} downloads in a 12 hour period.  Please contact roncli@roncli.com if you need to exceed this limit.`);
-                res.end();
-            } else {
-                // Update the download count.
-                downloads[ip].count++;
-                downloads[ip].last = new Date();
-                if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
-                    appInsights.defaultClient.trackMetric({properties: {application: "tis.roncli.com", container: "tisronclicom-node", ipaddress: ip}, name: "Downloads", value: downloads[ip].count});
-                }
-
-                // Download the file.
-                res.download(file, () => {});
-            }
-        });
-
-        // Start server.
-        app.listen(port, () => {
-            console.log(`Server PID ${process.pid} listening on port ${port} in ${app.get("env")} mode.`);
-        });
+    // Set title.
+    if (process.platform === "win32") {
+        process.title = "tis.roncli.com";
+    } else {
+        process.stdout.write("\x1b]2;tis.roncli.com\x1b\x5c");
     }
-}
 
-Index.startup();
+    // Setup express app.
+    const app = express();
+
+    // Remove powered by.
+    app.disable("x-powered-by");
+
+    // Initialize middleware stack.
+    app.use(compression());
+
+    // Trust proxy to get correct IP from web server.
+    app.enable("trust proxy");
+
+    // Setup hot-router.
+    const router = new hotRouter.Router();
+    router.on("error", (data) => {
+        Log.error(data.message, {err: data.err, req: data.req});
+    });
+    try {
+        app.use("/", await router.getRouter(path.join(__dirname, "web"), {hot: false}));
+    } catch (err) {
+        Log.critical("Could not set up routes.", {err});
+    }
+
+    app.use((err, req, res, next) => {
+        router.error(err, req, res, next);
+    });
+
+    // Startup webserver
+    const port = process.env.PORT || 3030;
+
+    app.listen(port);
+
+    Log.info(`Server PID ${process.pid} listening on port ${port}.`);
+}());

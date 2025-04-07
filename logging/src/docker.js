@@ -21,7 +21,7 @@ class Docker {
     // MARK: async start
     /**
      * Starts docker stats logging.
-     * @returns {Promise} A promise that never resolves.  Don't await this method.
+     * @returns {Promise<void>} A promise that never resolves.  Don't await this method.
      */
     async start() {
         /** @type {DockerTypes.MinutesStats} */

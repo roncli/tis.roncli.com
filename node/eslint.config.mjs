@@ -101,5 +101,16 @@ export default [
             "@stylistic/quotes": ["error", "double"],
             "@stylistic/space-before-function-paren": "off"
         }
+    },
+    {
+        files: ["public/**/*.js"],
+        languageOptions: {
+            ecmaVersion: 6,
+            sourceType: "script",
+            globals: {
+                ...globals.es6,
+                ...globals.browser
+            }
+        }
     }
 ];
