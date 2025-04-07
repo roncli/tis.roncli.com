@@ -6,7 +6,6 @@
 const Common = require("./common"),
     DirectoryView = require("../public/views/directory"),
     fs = require("fs/promises"),
-    Log = require("@roncli/node-application-insights-logger"),
     NotFoundView = require("../public/views/404"),
     path = require("path"),
     RouterBase = require("hot-router").RouterBase;
@@ -66,13 +65,7 @@ class Directory extends RouterBase {
         for (const file of contents) {
             const obj = path.join(fileDir, file);
 
-            let stats;
-            try {
-                stats = await fs.lstat(obj);
-            } catch (err) {
-                Log.error("Error while looping through the directory.", {err, req, properties: {file, route: Directory.route.path.toString()}});
-                return;
-            }
+            const stats = await fs.lstat(obj);
 
             files.push({
                 name: file,

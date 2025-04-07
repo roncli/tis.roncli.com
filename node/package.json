@@ -21,7 +21,6 @@
         "@roncli/node-application-insights-logger": "roncli/node-application-insights-logger#v1.1.0",
         "compression": "1.8.0",
         "express": "5.1.0",
-        "find": "0.3.0",
         "hot-router": "2.0.0-beta.3",
         "html-minifier-terser": "7.2.0"
     },

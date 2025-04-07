@@ -5,11 +5,8 @@
 
 const BadRequestView = require("../public/views/400.js"),
     Common = require("./common.js"),
-    find = require("find"),
     fs = require("fs/promises"),
-    Log = require("@roncli/node-application-insights-logger"),
     path = require("path"),
-    Queue = require("../src/queue.js"),
     RouterBase = require("hot-router").RouterBase,
     SearchView = require("../public/views/search.js");
 
@@ -18,6 +15,40 @@ const BadRequestView = require("../public/views/400.js"),
  * A class that represents the search page.
  */
 class Search extends RouterBase {
+    // MARK: static async #searchFiles
+    /**
+     * Searches the files in the directory for the given text.
+     * @param {string} text The text to search for.
+     * @param {string} fileDir The directory to search in.
+     * @returns {Promise<string[]>} A promise that resolves to a list of matching file paths.
+     */
+    static async #searchFiles(text, fileDir) {
+        const matchingFiles = [];
+
+        const stack = [fileDir]; // Use a stack to manage directories to process.
+
+        while (stack.length > 0) {
+            const currentDir = stack.pop();
+            const entries = await fs.readdir(currentDir, {withFileTypes: true});
+
+            for (const entry of entries) {
+                const fullPath = path.join(currentDir, entry.name);
+
+                if (entry.isDirectory()) {
+                    stack.push(fullPath); // Add directories to the stack for further processing.
+                } else if (entry.isFile() && entry.name.includes(text)) {
+                    let relativePath = fullPath.substring(fileDir.length + 1);
+                    if (process.platform === "win32") {
+                        relativePath = relativePath.replace(/\\/g, "/");
+                    }
+                    matchingFiles.push(relativePath); // Add matching files to the result list.
+                }
+            }
+        }
+
+        return matchingFiles;
+    }
+
     // MARK: static get route
     /**
      * Retrieves the route parameters for the class.
@@ -50,47 +81,32 @@ class Search extends RouterBase {
         // Get the files directory.
         const fileDir = path.join(__dirname, "..", "files");
 
-        // Startup a new queue.
-        const queue = new Queue();
+        // Search for matching files.
+        const matchingFiles = await Search.#searchFiles(text, fileDir);
 
         const files = [];
 
-        // Loop through the files found and output them.
-        find.eachfile(new RegExp(text, "i"), fileDir, (file) => {
-            queue.push(async () => {
-                let stats;
-                try {
-                    stats = await fs.lstat(file);
-                } catch (err) {
-                    Log.error("Error while looping through searched files.", {err, req, properties: {file, route: Search.route.path.toString()}});
-                }
-
-                file = file.substring(fileDir.length + 1);
-                if (process.platform === "win32") {
-                    file = file.replace(/\\/g, "/");
-                }
-
-                files.push({
-                    name: file,
-                    size: stats.isDirectory() ? void 0 : Common.fileSize(stats.size)
-                });
+        for (const file of matchingFiles) {
+            const stats = await fs.lstat(path.join(fileDir, file));
+            files.push({
+                name: file,
+                size: Common.fileSize(stats.size)
             });
-        }).end(() => {
-            queue.push(async () => {
-                files.sort((a, b) => {
-                    // Put directories first, then files.
-                    if (a.size && !b.size) {
-                        return 1;
-                    } else if (!a.size && b.size) {
-                        return -1;
-                    }
+        }
 
-                    // Sort by name.
-                    return a.name.localeCompare(b.name);
-                });
-                res.status(200).send(await Common.page("", SearchView.get({text, files}), req));
-            });
+        files.sort((a, b) => {
+            // Put directories first, then files.
+            if (a.size && !b.size) {
+                return 1;
+            } else if (!a.size && b.size) {
+                return -1;
+            }
+
+            // Sort by name.
+            return a.name.localeCompare(b.name);
         });
+
+        res.status(200).send(await Common.page("", SearchView.get({text, files}), req));
     }
 }
 
