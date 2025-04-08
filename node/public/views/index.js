@@ -22,7 +22,7 @@ class IndexView {
                     <meta name="og:url" content="${protocol}://${host}${encodeURI(originalUrl)}" />
                     <meta name="twitter:card" content="summary" />
                     <meta name="twitter:creator" content="@roncli" />
-                    <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon"> 
+                    <link rel="icon" href="data:,"> 
                     ${head}
                     <style>
                         body {background-color: #121212; color: #e0e0e0;}

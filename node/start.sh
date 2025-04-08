@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Validation.
-if [ ! $APPINSIGHTS_INSTRUMENTATIONKEY ];
+if [ ! $APPINSIGHTS_CONNECTIONSTRING ];
 then
     echo "Warning: Application Insights is not setup.  Application will log to console."
 fi
@@ -15,4 +15,4 @@ fi
 cd /var/www
 
 # Run app.
-exec env APPINSIGHTS_INSTRUMENTATIONKEY=$(cat $APPINSIGHTS_INSTRUMENTATIONKEY) node index
+exec env APPINSIGHTS_CONNECTIONSTRING=$(cat $APPINSIGHTS_CONNECTIONSTRING) node index

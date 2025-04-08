@@ -7,7 +7,7 @@ More generally, this site basically functions as a file repository.  Azure Appli
 
 If you use this for yourself, you'll want to go into the `/docker-compose.yml`, `/node/package.json`, and `/node/index.js` files and the `/node/html` directory, remove the tis.roncli.com-specific content, and replace it with your own.
 
-You need four files under the `/secrets` directory: `APPINSIGHTS_INSTRUMENTATIONKEY`, `FILES_URI`, `FILES_USERNAME`, and `FILES_PASSWORD`.  These correspond respectively to your Azure Application Insights instrumentation key, your Azure Storage file share URI (Example, `//your-storage-url.file.core.windows.net/your-share-name`), your Azure Storage resource name, and your Azure Storage key.
+You need four files under the `/secrets` directory: `APPINSIGHTS_CONNECTIONSTRING`, `FILES_URI`, `FILES_USERNAME`, and `FILES_PASSWORD`.  These correspond respectively to your Azure Application Insights connection string, your Azure Storage file share URI (Example, `//your-storage-url.file.core.windows.net/your-share-name`), your Azure Storage resource name, and your Azure Storage key.
 
 To run the application, have Docker and Docker Compose installed, and run `docker-compose up --build -d`.
 

@@ -7,8 +7,8 @@ const compression = require("compression"),
 // MARK: async function startup
 (async function startup() {
     // Setup application insights.
-    if (process.env.APPINSIGHTS_INSTRUMENTATIONKEY) {
-        Log.setupApplicationInsights(process.env.APPINSIGHTS_INSTRUMENTATIONKEY, {application: "tis.roncli.com", container: "tisronclicom-node"});
+    if (process.env.APPINSIGHTS_CONNECTIONSTRING) {
+        Log.setupApplicationInsights(process.env.APPINSIGHTS_CONNECTIONSTRING, {application: "tis.roncli.com", container: "tisronclicom-node"});
     }
 
     console.log("Starting up...");
