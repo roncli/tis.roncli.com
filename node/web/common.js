@@ -3,11 +3,9 @@
  */
 
 const HtmlMinifierTerser = require("html-minifier-terser"),
+    IndexView = require("../public/views/index"),
     pjson = require("../package.json"),
     RouterBase = require("hot-router").RouterBase;
-
-/** @type {typeof import("../public/views/index")} */
-let IndexView;
 
 // MARK: class Common
 /**
@@ -57,10 +55,6 @@ class Common extends RouterBase {
      * @returns {Promise<string>} The HTML of the full web page.
      */
     static page(head, html, req) {
-        if (!IndexView) {
-            IndexView = require("../public/views/index");
-        }
-
         return HtmlMinifierTerser.minify(
             IndexView.get({
                 head,

@@ -15,7 +15,6 @@ const Common = require("./common"),
  */
 class File extends RouterBase {
     static #MAXREQUESTS = 1000;
-
     /** @type {{[x: string]: {count: number, last: Date}}} */
     static #downloads = {};
 

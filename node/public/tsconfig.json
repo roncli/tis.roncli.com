@@ -3,8 +3,8 @@
     "compilerOptions": {
         "outDir": "../.vscode/ts-browser",
         "strict": true,
-        "lib": ["DOM", "DOM.Iterable", "ES2017"],
-        "target": "ES2017"
+        "lib": ["DOM", "DOM.Iterable", "ES2022"],
+        "target": "ES2022"
     },
     "include": [
         "**/*.js",

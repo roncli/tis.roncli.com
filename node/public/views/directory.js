@@ -3,6 +3,8 @@
  * A class that represents the directory view.
  */
 class DirectoryView {
+    static #Encoding = typeof module === "undefined" ? window.Encoding : require("../js/encoding.js");
+
     // MARK: static get
     /**
      * Gets the rendered directory template.
@@ -22,24 +24,20 @@ class DirectoryView {
                 <input type="text" name="text" />
                 <input type="submit" value="Search">
             </form>
-            <h2>Current directory: ${DirectoryView.Encoding.htmlEncode(path)}</h2>
+            <h2>Current directory: ${DirectoryView.#Encoding.htmlEncode(path)}</h2>
             ${html}
             <h2>Directory contents:</h2>
             ${path === "/" ? "" : /* html */`
-                <a href="${DirectoryView.Encoding.attributeEncode(parent)}">Parent Directory</a><br />
+                <a href="${DirectoryView.#Encoding.attributeEncode(parent)}">Parent Directory</a><br />
             `}
             ${files.length === 0 ? /* html */`
                 No files found.
             ` : files.map((file) => /* html */`
-                <a href="${DirectoryView.Encoding.attributeEncode(`${path}${file.name}`)}${file.size ? "" : "/"}">/${DirectoryView.Encoding.htmlEncode(file.name)}</a>${file.size ? `- ${DirectoryView.Encoding.htmlEncode(file.size)}` : ""}<br />
+                <a href="${DirectoryView.#Encoding.attributeEncode(`${path}${file.name}`)}${file.size ? "" : "/"}">/${DirectoryView.#Encoding.htmlEncode(file.name)}</a>${file.size ? `- ${DirectoryView.#Encoding.htmlEncode(file.size)}` : ""}<br />
             `).join("")}
         `;
     }
 }
-
-/** @type {typeof import("../js/encoding")} */
-// @ts-ignore
-DirectoryView.Encoding = typeof Encoding === "undefined" ? require("../js/encoding.js") : Encoding; // eslint-disable-line no-undef
 
 if (typeof module === "undefined") {
     window.DirectoryView = DirectoryView;

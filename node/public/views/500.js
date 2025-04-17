@@ -4,7 +4,6 @@
  */
 class ServerErrorView {
     // MARK: static get
-
     /**
      * Gets the rendered server error template.
      * @returns {string} An HTML string of the server error view.
