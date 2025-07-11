@@ -29,7 +29,7 @@
         "@stylistic/eslint-plugin": "5.1.0",
         "@types/compression": "1.8.1",
         "@types/express": "5.0.3",
-        "@types/node": "24.0.12",
+        "@types/node": "24.0.13",
         "eslint-plugin-jsdoc": "50.6.17"
     },
     "scripts": {
