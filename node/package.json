@@ -19,7 +19,7 @@
     "license": "MIT",
     "dependencies": {
         "@roncli/node-application-insights-logger": "roncli/node-application-insights-logger#v1.1.0",
-        "compression": "1.8.0",
+        "compression": "1.8.1",
         "express": "5.1.0",
         "hot-router": "2.0.0-beta.3",
         "html-minifier-terser": "7.2.0"
