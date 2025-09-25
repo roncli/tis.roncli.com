@@ -1,6 +1,6 @@
 {
     "name": "tis.roncli.com-logging",
-    "version": "3.0.0",
+    "version": "3.0.1",
     "description": "gelf logging for tis.roncli.com.",
     "homepage": "https://github.com/roncli/tis.roncli.com",
     "bugs": {

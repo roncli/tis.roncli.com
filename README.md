@@ -13,6 +13,10 @@ To run the application, have Docker and Docker Compose installed, and run `docke
 
 ## Version History
 
+### v3.0.1 - 9/25/2025
+* Fix path traversal attempts throwing errors.
+* Package updates.
+
 ### v3.0.0 - 4/7/2025
 * Major refactor.
 * Package updates.

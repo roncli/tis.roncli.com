@@ -1,6 +1,6 @@
 {
     "name": "tis.roncli.com-node",
-    "version": "3.0.0",
+    "version": "3.0.1",
     "description": "The site that allows users to search old Trax in Space 1 files.",
     "homepage": "https://github.com/roncli/tis.roncli.com",
     "bugs": {
