@@ -56,7 +56,14 @@ class File extends RouterBase {
         }
 
         // Get the filename.
-        const file = path.join(__dirname, "..", "files", reqPath);
+        const filesDir = path.resolve(__dirname, "..", "files");
+        const file = path.resolve(filesDir, reqPath);
+
+        // Ensure the file is in the files directory.
+        if (!file.startsWith(filesDir)) {
+            next();
+            return;
+        }
 
         // Check if the file exists.
         try {
