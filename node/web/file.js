@@ -7,7 +7,9 @@ const Common = require("./common"),
     fs = require("fs/promises"),
     path = require("path"),
     RouterBase = require("hot-router").RouterBase,
-    TooManyRequestsView = require("../public/views/429");
+    TooManyRequestsView = require("../public/views/429"),
+
+    badPathCharactersRegex = /[<>:"|?*]/;
 
 // MARK: class File
 /**
@@ -40,8 +42,21 @@ class File extends RouterBase {
      * @returns {Promise<void>}
      */
     static async get(req, res, next) {
+        // Ensure we have a valid path.
+        let reqPath;
+        try {
+            reqPath = decodeURIComponent(req.path);
+        } catch {
+            next();
+            return;
+        }
+        if (reqPath.includes("..") || path.isAbsolute(reqPath) || badPathCharactersRegex.test(reqPath)) {
+            next();
+            return;
+        }
+
         // Get the filename.
-        const file = path.join(__dirname, "..", "files", decodeURIComponent(req.path));
+        const file = path.join(__dirname, "..", "files", reqPath);
 
         // Check if the file exists.
         try {
