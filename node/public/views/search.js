@@ -26,7 +26,7 @@ class SearchView {
             ${files.length === 0 ? /* html */`
                 No results found.
             ` : files.map((file) => /* html */`
-                <a href="/${SearchView.#Encoding.attributeEncode(file.name)}">/${SearchView.#Encoding.htmlEncode(file.name)}</a>${file.size ? `- ${SearchView.#Encoding.htmlEncode(file.size)}` : ""}<br />
+                <a href="/${SearchView.#Encoding.attributeEncode(file.name)}">/${SearchView.#Encoding.htmlEncode(file.name)}</a>${file.size ? ` - ${SearchView.#Encoding.htmlEncode(file.size)}` : ""}<br />
             `).join("")}
         `;
     }

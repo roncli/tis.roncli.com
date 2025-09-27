@@ -33,7 +33,7 @@ class DirectoryView {
             ${files.length === 0 ? /* html */`
                 No files found.
             ` : files.map((file) => /* html */`
-                <a href="${DirectoryView.#Encoding.attributeEncode(`${path}${file.name}`)}${file.size ? "" : "/"}">/${DirectoryView.#Encoding.htmlEncode(file.name)}</a>${file.size ? `- ${DirectoryView.#Encoding.htmlEncode(file.size)}` : ""}<br />
+                <a href="${DirectoryView.#Encoding.attributeEncode(`${path}${file.name}`)}${file.size ? "" : "/"}">/${DirectoryView.#Encoding.htmlEncode(file.name)}</a>${file.size ? ` - ${DirectoryView.#Encoding.htmlEncode(file.size)}` : ""}<br />
             `).join("")}
         `;
     }
