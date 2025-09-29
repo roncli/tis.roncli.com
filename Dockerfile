@@ -16,14 +16,11 @@ RUN apk del git
 # Copy remaining files.
 COPY . .
 
-# Import arg.
-ARG USE_AZURE_FILE_STORAGE
-
-# Remove test files directory if we're going to use Azure file storage.
-RUN if [ $USE_AZURE_FILE_STORAGE -eq 1 ]; then rm -r ./files; mkdir -p /mnt/files; ln -s /mnt/files ./files; fi
-
 # Allow start script to run.
 RUN chmod +x /var/www/*.sh
 
-# Expose port 3030.
-EXPOSE 3030
+# Expose port 8080.
+EXPOSE 8080
+
+# Start the application.
+ENTRYPOINT ["/var/www/start.sh"]

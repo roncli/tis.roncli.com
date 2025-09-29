@@ -22,7 +22,7 @@ class Index {
     static async startup() {
         // Setup application insights.
         if (process.env.APPINSIGHTS_CONNECTIONSTRING) {
-            Log.setupApplicationInsights(process.env.APPINSIGHTS_CONNECTIONSTRING, {application: "tis.roncli.com", container: "tisronclicom-node"});
+            Log.setupApplicationInsights(process.env.APPINSIGHTS_CONNECTIONSTRING, {application: "tis.roncli.com"});
         }
 
         console.log("Starting up...");
@@ -62,7 +62,7 @@ class Index {
         });
 
         // Startup webserver
-        const port = process.env.PORT || 3030;
+        const port = process.env.PORT || 8080;
 
         app.listen(port);
 

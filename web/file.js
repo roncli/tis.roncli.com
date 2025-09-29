@@ -9,7 +9,8 @@ const Common = require("./common"),
     RouterBase = require("hot-router").RouterBase,
     TooManyRequestsView = require("../public/views/429"),
 
-    badPathCharactersRegex = /[<>:"|?*]/;
+    badPathCharactersRegex = /[<>:"|?*]/,
+    leadingSlashesRegex = /^\/+/;
 
 // MARK: class File
 /**
@@ -50,13 +51,14 @@ class File extends RouterBase {
             next();
             return;
         }
-        if (reqPath.includes("..") || path.isAbsolute(reqPath) || badPathCharactersRegex.test(reqPath)) {
+        if (reqPath.includes("..") || badPathCharactersRegex.test(reqPath)) {
             next();
             return;
         }
 
         // Get the filename.
         const filesDir = path.resolve(__dirname, "..", "files");
+        reqPath = reqPath.replace(leadingSlashesRegex, "");
         const file = path.resolve(filesDir, reqPath);
 
         // Ensure the file is in the files directory.

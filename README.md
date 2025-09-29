@@ -5,13 +5,36 @@ More generally, this site basically functions as a file repository.  Azure Appli
 
 ## Usage
 
-If you use this for yourself, you'll want to go into the `/docker-compose.yml`, `/node/package.json`, and `/node/index.js` files and the `/node/html` directory, remove the tis.roncli.com-specific content, and replace it with your own.
+This project is deployed into an Azure Container App.
 
-You need four files under the `/secrets` directory: `APPINSIGHTS_CONNECTIONSTRING`, `FILES_URI`, `FILES_USERNAME`, and `FILES_PASSWORD`.  These correspond respectively to your Azure Application Insights connection string, your Azure Storage file share URI (Example, `//your-storage-url.file.core.windows.net/your-share-name`), your Azure Storage resource name, and your Azure Storage key.
+If you use this for yourself, you'll want to go into the `package.json` and `index.js` files and the `html` directory, remove the tis.roncli.com-specific content, and replace it with your own.
 
-To run the application, have Docker and Docker Compose installed, and run `docker-compose up --build -d`.
+You need four files under the following environment variables, which you can place in an `.env` file in the root of the4 directory.  It should contain the following:
+
+```sh
+PORT=8080
+NODE_ENV=production
+APPINSIGHTS_CONNECTIONSTRING=InstrumentationKey=...
+USE_AZURE_FILE_STORAGE=0
+```
+
+If you set `USE_AZURE_FILE_STORAGE` to 0, then the application will use the local `files` directory for files to serve.
+
+If you set `USE_AZURE_FILE_STORAGE` to 1, then you will need to mount a file share to the `/mnt/files` directory.  This needs to be done in Azure by mounting a volume to the container itself.
+
+To run the application locally, set `USE_AZURE_FILE_STORAGE` to 0, have Docker installed, and run the following Docker commands from the root of the project:
+
+```sh
+docker build -t tis.roncli.com .
+docker run -d -p 8080:8080 --env-file .env --name tis-roncli-com tis-roncli-com
+```
 
 ## Version History
+
+### v4.0.0 - 9/28/2025
+* Updated to use Azure Container Apps instead of Docker.
+* Fixed bug with being unable to download files.
+* Package updates.
 
 ### v3.0.1 - 9/25/2025
 * Fix path traversal attempts throwing errors.
