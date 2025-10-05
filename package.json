@@ -33,6 +33,7 @@
         "eslint-plugin-jsdoc": "60.7.1"
     },
     "scripts": {
-        "reinstall": "rmdir /s /q node_modules && npm install"
+        "reinstall": "rmdir /s /q node_modules && npm install",
+        "run": "node ."
     }
 }
