@@ -31,6 +31,10 @@ docker run -d -p 8080:8080 --env-file .env --name tis-roncli-com tis-roncli-com
 
 ## Version History
 
+### v4.0.1 - 10/5/2025
+* Fixed bug with directory paths not working when missing the trailing slash.
+* Package updates.
+
 ### v4.0.0 - 9/28/2025
 * Updated to use Azure Container Apps instead of Docker.
 * Fixed bug with being unable to download files.
