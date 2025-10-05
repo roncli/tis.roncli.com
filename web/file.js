@@ -1,6 +1,7 @@
 /**
  * @typedef {import("express").Request} Express.Request
  * @typedef {import("express").Response} Express.Response
+ * @typedef {import("fs").Stats} Stats
  */
 
 const Common = require("./common"),
@@ -67,10 +68,23 @@ class File extends RouterBase {
             return;
         }
 
-        // Check if the file exists.
+        // Check if the file exists and whether it's a directory.
+        /** @type {Stats} */
+        let stat;
         try {
-            await fs.access(file, fs.constants.F_OK);
+            stat = await fs.stat(file);
         } catch {
+            next();
+            return;
+        }
+
+        if (stat.isDirectory()) {
+            // If the path is a directory but the URL does not end with a slash, redirect to the same path with a trailing slash.
+            if (!req.path.endsWith("/")) {
+                res.redirect(301, `${req.path}/`);
+                return;
+            }
+            // If it already ends with a slash, let the directory route handle it (should not reach here).
             next();
             return;
         }
