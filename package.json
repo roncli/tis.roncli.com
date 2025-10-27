@@ -30,7 +30,7 @@
         "@types/compression": "1.8.1",
         "@types/express": "5.0.4",
         "@types/node": "24.9.1",
-        "eslint-plugin-jsdoc": "61.1.7"
+        "eslint-plugin-jsdoc": "61.1.9"
     },
     "scripts": {
         "reinstall": "(if exist node_modules rmdir /s /q node_modules) & npm install",
