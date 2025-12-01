@@ -20,7 +20,7 @@
     "dependencies": {
         "@roncli/node-application-insights-logger": "roncli/node-application-insights-logger#v2.0.1",
         "compression": "1.8.1",
-        "express": "5.1.0",
+        "express": "5.2.0",
         "hot-router": "2.0.0-beta.6",
         "html-minifier-terser": "7.2.0"
     },
