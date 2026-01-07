@@ -59,6 +59,9 @@ This project is a Node.js/Express web application for searching and serving file
 - **Azure File Storage:** Optional, controlled by `USE_AZURE_FILE_STORAGE`.
 - **hot-router:** Used for modular, class-based routing.
 
+## License
+This project is licensed under the MIT License. See the [LICENSE](../LICENSE) file for details.
+
 ---
 
 For questions or issues, see the [README.md](../README.md) or [GitHub Issues](https://github.com/roncli/tis.roncli.com/issues).
