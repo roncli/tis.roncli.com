@@ -8,7 +8,7 @@ updates:
       timezone: "America/Los_Angeles"
     ignore:
       - dependency-name: "node"
-        versions: [">= 23.0"]
+        versions: [">= 25.0"]
   - package-ecosystem: "npm"
     directory: /
     schedule:
