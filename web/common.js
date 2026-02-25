@@ -5,19 +5,19 @@
 const HtmlMinifierTerser = require("html-minifier-terser"),
     IndexView = require("../public/views/index"),
     pjson = require("../package.json"),
-    RouterBase = require("hot-router").RouterBase;
+    HotRouter = require("hot-router");
 
 // MARK: class Common
 /**
  * A class that handles common web functions.
  */
-class Common extends RouterBase {
+class Common extends HotRouter.RouterBase {
     static #sizes = ["Bytes", "KB", "MB", "GB", "TB", "PB", "EB"];
 
     // MARK: static get route
     /**
      * Retrieves the route parameters for the class.
-     * @returns {RouterBase.Route} The route parameters.
+     * @returns {HotRouter.RouterBase.Route} The route parameters.
      */
     static get route() {
         const route = {...super.route};

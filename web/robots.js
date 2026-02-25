@@ -4,17 +4,17 @@
  */
 
 const os = require("os"),
-    RouterBase = require("hot-router").RouterBase;
+    HotRouter = require("hot-router");
 
 // MARK: class Robots
 /**
  * A class that represents the robots.txt file.
  */
-class Robots extends RouterBase {
+class Robots extends HotRouter.RouterBase {
     // MARK: static get route
     /**
      * Retrieves the route parameters for the class.
-     * @returns {RouterBase.Route} The route parameters.
+     * @returns {HotRouter.RouterBase.Route} The route parameters.
      */
     static get route() {
         const route = {...super.route};
@@ -27,11 +27,11 @@ class Robots extends RouterBase {
     // MARK: static async get
     /**
      * Processes the request.
-     * @param {Express.Request} req The request object.
+     * @param {Express.Request} _req The request object.
      * @param {Express.Response} res The response object.
      * @returns {void}
      */
-    static get(req, res) {
+    static get(_req, res) {
         res.status(200).send(`User-agent: *${os.EOL}Disallow: /`);
     }
 }

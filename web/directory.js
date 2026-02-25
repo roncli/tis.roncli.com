@@ -8,17 +8,17 @@ const Common = require("./common"),
     fs = require("fs/promises"),
     NotFoundView = require("../public/views/404"),
     path = require("path"),
-    RouterBase = require("hot-router").RouterBase;
+    HotRouter = require("hot-router");
 
 // MARK: class Directory
 /**
  * A class that represents the directory listing page.
  */
-class Directory extends RouterBase {
+class Directory extends HotRouter.RouterBase {
     // MARK: static get route
     /**
      * Retrieves the route parameters for the class.
-     * @returns {RouterBase.Route} The route parameters.
+     * @returns {HotRouter.RouterBase.Route} The route parameters.
      */
     static get route() {
         const route = {...super.route};
@@ -55,23 +55,18 @@ class Directory extends RouterBase {
 
         let html = "";
         try {
-            await fs.access(htmlPath, fs.constants.F_OK);
             html = await fs.readFile(htmlPath, {encoding: "utf8"});
-        } catch {}
+        } catch { } // eslint-disable-line no-empty -- The intent is to display no HTML if the file doesn't exist.
 
-        const files = [];
-
-        // Loop through the files to find all of the files and directories and output them.
-        for (const file of contents) {
+        // Output all the files and directories.
+        const files = await Promise.all(contents.map(async (file) => {
             const obj = path.join(fileDir, file);
-
             const stats = await fs.lstat(obj);
-
-            files.push({
+            return {
                 name: file,
                 size: stats.isDirectory() ? void 0 : Common.fileSize(stats.size)
-            });
-        }
+            };
+        }));
 
         let parent = "";
         if (req.path !== "/") {

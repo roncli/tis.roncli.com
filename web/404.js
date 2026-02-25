@@ -5,17 +5,17 @@
 
 const Common = require("./common"),
     NotFoundView = require("../public/views/404"),
-    RouterBase = require("hot-router").RouterBase;
+    HotRouter = require("hot-router");
 
 // MARK: class NotFound
 /**
  * A class that represents the 404 page.
  */
-class NotFound extends RouterBase {
+class NotFound extends HotRouter.RouterBase {
     // MARK: static get route
     /**
      * Retrieves the route parameters for the class.
-     * @returns {RouterBase.Route} The route parameters.
+     * @returns {HotRouter.RouterBase.Route} The route parameters.
      */
     static get route() {
         const route = {...super.route};

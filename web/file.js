@@ -7,7 +7,7 @@
 const Common = require("./common"),
     fs = require("fs/promises"),
     path = require("path"),
-    RouterBase = require("hot-router").RouterBase,
+    HotRouter = require("hot-router"),
     TooManyRequestsView = require("../public/views/429"),
 
     badPathCharactersRegex = /[<>:"|?*]/,
@@ -17,15 +17,22 @@ const Common = require("./common"),
 /**
  * A class that represents the file route.
  */
-class File extends RouterBase {
-    static #MAXREQUESTS = 1000;
+class File extends HotRouter.RouterBase {
     /** @type {{[x: string]: {count: number, last: Date}}} */
     static #downloads = {};
+
+    /**
+     * The maximum number of requests an IP address can make in a 12 hour period before receiving a 429.
+     * @returns {number} The maximum number of requests.
+     */
+    static get #MAXREQUESTS() {
+        return 1000;
+    }
 
     // MARK: static get route
     /**
      * Retrieves the route parameters for the class.
-     * @returns {RouterBase.Route} The route parameters.
+     * @returns {HotRouter.RouterBase.Route} The route parameters.
      */
     static get route() {
         const route = {...super.route};
@@ -109,7 +116,7 @@ class File extends RouterBase {
         File.#downloads[ip].last = new Date();
 
         // Download the file.
-        res.download(file, () => {});
+        res.download(file);
     }
 }
 

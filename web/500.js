@@ -4,18 +4,18 @@
  */
 
 const Common = require("./common"),
-    RouterBase = require("hot-router").RouterBase,
+    HotRouter = require("hot-router"),
     ServerErrorView = require("../public/views/500");
 
 // MARK: class ServerError
 /**
  * A class that represents the 500 page.
  */
-class ServerError extends RouterBase {
+class ServerError extends HotRouter.RouterBase {
     // MARK: static get route
     /**
      * Retrieves the route parameters for the class.
-     * @returns {RouterBase.Route} The route parameters.
+     * @returns {HotRouter.RouterBase.Route} The route parameters.
      */
     static get route() {
         const route = {...super.route};

@@ -7,14 +7,14 @@ const BadRequestView = require("../public/views/400.js"),
     Common = require("./common.js"),
     fs = require("fs/promises"),
     path = require("path"),
-    RouterBase = require("hot-router").RouterBase,
+    HotRouter = require("hot-router"),
     SearchView = require("../public/views/search.js");
 
 // MARK: class Search
 /**
  * A class that represents the search page.
  */
-class Search extends RouterBase {
+class Search extends HotRouter.RouterBase {
     // MARK: static async #searchFiles
     /**
      * Searches the files in the directory for the given text.
@@ -29,7 +29,7 @@ class Search extends RouterBase {
 
         while (stack.length > 0) {
             const currentDir = stack.pop();
-            const entries = await fs.readdir(currentDir, {withFileTypes: true});
+            const entries = await fs.readdir(currentDir, {withFileTypes: true}); // eslint-disable-line no-await-in-loop -- We need to process directories sequentially in order for the stack to work.
 
             for (const entry of entries) {
                 const fullPath = path.join(currentDir, entry.name);
@@ -52,7 +52,7 @@ class Search extends RouterBase {
     // MARK: static get route
     /**
      * Retrieves the route parameters for the class.
-     * @returns {RouterBase.Route} The route parameters.
+     * @returns {HotRouter.RouterBase.Route} The route parameters.
      */
     static get route() {
         const route = {...super.route};
@@ -84,15 +84,14 @@ class Search extends RouterBase {
         // Search for matching files.
         const matchingFiles = await Search.#searchFiles(text, fileDir);
 
-        const files = [];
-
-        for (const file of matchingFiles) {
+        // Get the stats for the matching files.
+        const files = await Promise.all(matchingFiles.map(async (file) => {
             const stats = await fs.lstat(path.join(fileDir, file));
-            files.push({
+            return {
                 name: file,
                 size: Common.fileSize(stats.size)
-            });
-        }
+            };
+        }));
 
         files.sort((a, b) => {
             // Put directories first, then files.
