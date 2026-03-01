@@ -1,5 +1,7 @@
 const Directory = require("../web/directory"),
-    httpMocks = require("node-mocks-http");
+    fs = require("fs"),
+    httpMocks = require("node-mocks-http"),
+    path = require("path");
 
 // MARK: Directory
 describe("Directory", () => {
@@ -32,10 +34,18 @@ describe("Directory", () => {
     });
 
     test("directory returns expected result for an empty directory", async () => {
+        const emptyDirPath = path.join(__dirname, "../files/EmptyDir");
+        if (!fs.existsSync(emptyDirPath)) {
+            fs.mkdirSync(emptyDirPath, {recursive: true});
+        }
+
         const req = httpMocks.createRequest({url: "/EmptyDir/"});
         const res = httpMocks.createResponse();
 
         await Directory.get(req, res);
         expect(res.statusCode).toBe(200);
+
+        // Clean up after test
+        fs.rmdirSync(emptyDirPath);
     });
 });
