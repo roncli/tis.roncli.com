@@ -18,6 +18,7 @@ class ServerErrorView {
     }
 }
 
+/* istanbul ignore if - Ignoring browser code. */
 if (typeof module === "undefined") {
     window.ServerErrorView = ServerErrorView;
 } else {

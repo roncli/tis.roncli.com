@@ -20,6 +20,7 @@ class TooManyRequestsView {
     }
 }
 
+/* istanbul ignore if - Ignoring browser code. */
 if (typeof module === "undefined") {
     window.TooManyRequestsView = TooManyRequestsView;
 } else {

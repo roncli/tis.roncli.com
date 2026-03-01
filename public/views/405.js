@@ -18,6 +18,7 @@ class MethodNotAllowedView {
     }
 }
 
+/* istanbul ignore if - Ignoring browser code. */
 if (typeof module === "undefined") {
     window.MethodNotAllowedView = MethodNotAllowedView;
 } else {

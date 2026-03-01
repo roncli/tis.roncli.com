@@ -3,6 +3,7 @@
  * A class that represents the search view.
  */
 class SearchView {
+    /* istanbul ignore next - Ignoring browser code. */
     static #Encoding = typeof module === "undefined" ? window.Encoding : require("../js/encoding.js");
 
     // MARK: static get
@@ -26,12 +27,13 @@ class SearchView {
             ${files.length === 0 ? /* html */`
                 No results found.
             ` : files.map((file) => /* html */`
-                <a href="/${SearchView.#Encoding.attributeEncode(file.name)}">/${SearchView.#Encoding.htmlEncode(file.name)}</a>${file.size ? ` - ${SearchView.#Encoding.htmlEncode(file.size)}` : ""}<br />
+                <a href="/${SearchView.#Encoding.attributeEncode(file.name)}">/${SearchView.#Encoding.htmlEncode(file.name)}</a>${SearchView.#Encoding.htmlEncode(file.size)}<br />
             `).join("")}
         `;
     }
 }
 
+/* istanbul ignore if - Ignoring browser code. */
 if (typeof module === "undefined") {
     window.SearchView = SearchView;
 } else {

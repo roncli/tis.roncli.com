@@ -38,6 +38,7 @@ class Search extends HotRouter.RouterBase {
                     stack.push(fullPath); // Add directories to the stack for further processing.
                 } else if (entry.isFile() && entry.name.includes(text)) {
                     let relativePath = fullPath.substring(fileDir.length + 1);
+                    /* istanbul ignore next - Ignore platform-specific code paths. */
                     if (process.platform === "win32") {
                         relativePath = relativePath.replace(/\\/g, "/");
                     }
@@ -93,17 +94,7 @@ class Search extends HotRouter.RouterBase {
             };
         }));
 
-        files.sort((a, b) => {
-            // Put directories first, then files.
-            if (a.size && !b.size) {
-                return 1;
-            } else if (!a.size && b.size) {
-                return -1;
-            }
-
-            // Sort by name.
-            return a.name.localeCompare(b.name);
-        });
+        files.sort((a, b) => a.name.localeCompare(b.name));
 
         res.status(200).send(await Common.page("", SearchView.get({text, files}), req));
     }

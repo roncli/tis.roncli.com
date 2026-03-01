@@ -18,6 +18,7 @@ class NotFoundView {
     }
 }
 
+/* istanbul ignore if - Ignoring browser code. */
 if (typeof module === "undefined") {
     window.NotFoundView = NotFoundView;
 } else {

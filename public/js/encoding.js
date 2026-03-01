@@ -24,6 +24,7 @@ class Encoding {
     }
 }
 
+/* istanbul ignore if - Ignoring browser code. */
 if (typeof module === "undefined") {
     window.Encoding = Encoding;
 } else {

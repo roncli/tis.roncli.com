@@ -18,7 +18,7 @@ const Common = require("./common"),
  * A class that represents the file route.
  */
 class File extends HotRouter.RouterBase {
-    /** @type {{[x: string]: {count: number, last: Date}}} */
+    /** @type {{[x: string]: {count: number, last: number}}} */
     static #downloads = {};
 
     /**
@@ -56,11 +56,11 @@ class File extends HotRouter.RouterBase {
         try {
             reqPath = decodeURIComponent(req.path);
         } catch {
-            next();
+            next?.();
             return;
         }
         if (reqPath.includes("..") || badPathCharactersRegex.test(reqPath)) {
-            next();
+            next?.();
             return;
         }
 
@@ -69,9 +69,9 @@ class File extends HotRouter.RouterBase {
         reqPath = reqPath.replace(leadingSlashesRegex, "");
         const file = path.resolve(filesDir, reqPath);
 
-        // Ensure the file is in the files directory.
+        // istanbul ignore if - filesDir should never be outside of the files path, but we do one final check for safety.
         if (!file.startsWith(filesDir)) {
-            next();
+            next?.();
             return;
         }
 
@@ -81,7 +81,7 @@ class File extends HotRouter.RouterBase {
         try {
             stat = await fs.stat(file);
         } catch {
-            next();
+            next?.();
             return;
         }
 
@@ -92,16 +92,16 @@ class File extends HotRouter.RouterBase {
                 return;
             }
             // If it already ends with a slash, let the directory route handle it (should not reach here).
-            next();
+            next?.();
             return;
         }
 
         // Ensure that the IP address is logging the number of downloads, and reset it if it's been more than 12 hours since their last download.
         const ip = req.ip.toString();
         if (!File.#downloads[ip]) {
-            File.#downloads[ip] = {count: 0, last: new Date()};
+            File.#downloads[ip] = {count: 0, last: Date.now()};
         }
-        if (new Date().getTime() - File.#downloads[ip].last.getTime() >= 12 * 60 * 60 * 1000) {
+        if (Date.now() - File.#downloads[ip].last >= 12 * 60 * 60 * 1000) {
             File.#downloads[ip].count = 0;
         }
 
@@ -113,7 +113,7 @@ class File extends HotRouter.RouterBase {
 
         // Update the download count.
         File.#downloads[ip].count++;
-        File.#downloads[ip].last = new Date();
+        File.#downloads[ip].last = Date.now();
 
         // Download the file.
         res.download(file);

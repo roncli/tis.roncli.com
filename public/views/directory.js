@@ -3,6 +3,7 @@
  * A class that represents the directory view.
  */
 class DirectoryView {
+    /* istanbul ignore next - Ignoring browser code. */
     static #Encoding = typeof module === "undefined" ? window.Encoding : require("../js/encoding.js");
 
     // MARK: static get
@@ -39,6 +40,7 @@ class DirectoryView {
     }
 }
 
+/* istanbul ignore if - Ignoring browser code. */
 if (typeof module === "undefined") {
     window.DirectoryView = DirectoryView;
 } else {

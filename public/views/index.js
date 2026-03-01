@@ -42,6 +42,7 @@ class IndexView {
     }
 }
 
+/* istanbul ignore if - Ignoring browser code. */
 if (typeof module === "undefined") {
     window.IndexView = IndexView;
 } else {

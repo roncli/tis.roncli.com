@@ -40,7 +40,7 @@ class Common extends HotRouter.RouterBase {
             factors++;
         }
         let unit = Common.#sizes[factors];
-        if (size === 1) {
+        if (size === 1 && factors === 0) {
             unit = unit.substring(0, unit.length - 1);
         }
         return `${size.toFixed(factors === 0 ? 0 : 2)} ${unit}`;
