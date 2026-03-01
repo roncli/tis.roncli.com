@@ -13,15 +13,26 @@ class IndexView {
         const {head, html, protocol, host, originalUrl, year, version} = data;
 
         return /* html */`
-            <html>
+            <html lang="en">
                 <head>
                     <meta charset="utf-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1">
+                    <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
                     <title>tis.roncli.com</title>
-                    <meta name="og:title" content="tis.roncli.com" />
-                    <meta name="og:type" content="website" />
-                    <meta name="og:url" content="${protocol}://${host}${encodeURI(originalUrl)}" />
-                    <meta name="twitter:card" content="summary" />
-                    <meta name="twitter:creator" content="@roncli" />
+                    <meta name="description" content="An archive of songs that were on the original Trax in Space website.">
+                    <link rel="canonical" href="${protocol}://${host}${encodeURI(originalUrl)}" />
+                    <meta property="og:title" content="tis.roncli.com">
+                    <meta property="og:description" content="An archive of songs that were on the original Trax in Space website.">
+                    <meta property="og:type" content="website">
+                    <meta property="og:url" content="${protocol}://${host}${encodeURI(originalUrl)}">
+                    <meta property="og:site_name" content="tis.roncli.com">
+                    <meta property="og:locale" content="en_US">
+                    <meta name="twitter:card" content="summary">
+                    <meta name="twitter:creator" content="@roncli">
+                    <meta name="twitter:url" content="${protocol}://${host}${encodeURI(originalUrl)}">
+                    <meta name="twitter:title" content="tis.roncli.com">
+                    <meta name="twitter:description" content="An archive of songs that were on the original Trax in Space website.">
+                    <meta name="fediverse:creator" content="@roncli@mastodon.social">
                     <link rel="icon" href="data:,"> 
                     ${head}
                     <style>
