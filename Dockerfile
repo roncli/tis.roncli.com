@@ -4,7 +4,7 @@ FROM node:24.14.0-alpine
 # Create /var/www directory.
 RUN mkdir -p /var/www
 
-# Copy files into /var/www directory.
+# Copy package.json into /var/www directory.
 WORKDIR /var/www
 COPY ./package.json .
 
