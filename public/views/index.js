@@ -33,7 +33,7 @@ class IndexView {
                     <meta name="twitter:title" content="tis.roncli.com">
                     <meta name="twitter:description" content="An archive of songs that were on the original Trax in Space website.">
                     <meta name="fediverse:creator" content="@roncli@mastodon.social">
-                    <link rel="icon" href="data:,"> 
+                    <link rel="icon" href="data:,">
                     ${head}
                     <style>
                         body {background-color: #121212; color: #e0e0e0;}
