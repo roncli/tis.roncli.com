@@ -4,9 +4,9 @@
         "checkJs": true,
         "esModuleInterop": true,
         "lib": ["es2022"],
-        "module": "node16",
+        "module": "nodenext",
         "moduleDetection": "legacy",
-        "moduleResolution": "node16",
+        "moduleResolution": "nodenext",
         "outDir": "./.vscode/ts",
         "resolveJsonModule": true,
         "target": "es2022"
