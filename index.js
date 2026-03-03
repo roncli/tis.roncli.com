@@ -3,8 +3,8 @@
  */
 
 const compression = require("compression"),
-    express = require("express"),
-    hotRouter = require("hot-router"),
+    Express = require("express"),
+    HotRouter = require("hot-router"),
     Log = require("@roncli/node-application-insights-logger"),
     path = require("path"),
     util = require("util");
@@ -39,7 +39,7 @@ class Index {
         }
 
         // Setup express app.
-        const app = express();
+        const app = Express();
 
         // Remove powered by.
         app.disable("x-powered-by");
@@ -51,7 +51,7 @@ class Index {
         app.enable("trust proxy");
 
         // Setup hot-router.
-        const router = new hotRouter.Router();
+        const router = new HotRouter.Router();
         router.on("error", (data) => {
             Log.error(data.message, {err: data.err, req: data.req});
         });
@@ -61,7 +61,7 @@ class Index {
             Log.critical("Could not set up routes.", {err});
         }
 
-        app.use((/** @type {HttpErrors.HttpError} */err, /** @type {express.Request} */req, /** @type {express.Response} */res, /** @type {express.NextFunction} */next) => {
+        app.use((/** @type {HttpErrors.HttpError} */err, /** @type {Express.Request} */req, /** @type {Express.Response} */res, /** @type {Express.NextFunction} */next) => {
             router.error(err, req, res, next);
         });
 

@@ -42,7 +42,7 @@ export default [
             "no-param-reassign": "off",
             "no-plusplus": "off",
             "no-ternary": "off",
-            "no-underscore-dangle": ["error", {"allow": ["_getData"]}],
+            "no-underscore-dangle": ["error", {"allow": ["_getData", "_id"]}],
             "no-unused-vars": ["error", {"argsIgnorePattern": "^_"}],
             "no-void": "off",
             "one-var": "off",
