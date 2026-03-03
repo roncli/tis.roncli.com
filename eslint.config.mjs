@@ -93,6 +93,9 @@ export default [
                 ...globals.es6,
                 ...globals.browser
             }
+        },
+        rules: {
+            "no-alert": "off"
         }
     }
 ];
