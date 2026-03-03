@@ -17,7 +17,7 @@ class IndexView {
                 <head>
                     <meta charset="utf-8">
                     <meta name="viewport" content="width=device-width, initial-scale=1">
-                    <meta http-equiv="Content-Security-Policy" content="default-src 'self'">
+                    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline';">
                     <title>tis.roncli.com</title>
                     <meta name="description" content="An archive of songs that were on the original Trax in Space website.">
                     <link rel="canonical" href="${protocol}://${host}${encodeURI(originalUrl)}" />
