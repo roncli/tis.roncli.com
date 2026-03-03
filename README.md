@@ -31,6 +31,15 @@ docker run -d -p 8080:8080 --env-file .env --name tis-roncli-com tis-roncli-com
 
 ## Version History
 
+### v4.0.3 - 3/2/2026
+* Add unit tests.
+* Additional `<head>` tags.
+* Optimized a number of loops involving file operations.
+* Removed some useless code from the search page.
+* Made the max request limit of 1000 immutable.
+* Updates required for `hot-router` version 2.
+* Package updates.
+
 ### v4.0.2 - 10/5/2025
 * Package updates.
 
