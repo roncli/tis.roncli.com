@@ -24,19 +24,19 @@ class Index {
      * @returns {Promise<void>}
      */
     static async startup() {
-        // Setup application insights.
-        if (process.env.APPINSIGHTS_CONNECTIONSTRING) {
-            Log.setupApplicationInsights(process.env.APPINSIGHTS_CONNECTIONSTRING, {application: "tis.roncli.com"});
-        }
-
-        console.log("Starting up...");
-
         // Set title.
         if (process.platform === "win32") {
             process.title = "tis.roncli.com";
         } else {
             process.stdout.write("\x1b]2;tis.roncli.com\x1b\x5c");
         }
+
+        // Setup application insights.
+        if (process.env.APPINSIGHTS_CONNECTIONSTRING) {
+            Log.setupApplicationInsights(process.env.APPINSIGHTS_CONNECTIONSTRING, {application: "tis.roncli.com"});
+        }
+
+        Log.info("Starting up...");
 
         // Setup express app.
         const app = Express();
@@ -74,6 +74,7 @@ class Index {
     }
 }
 
+// MARK: Index.startup()
 Index.startup().catch((err) => {
     Log.error("Failed to start the application.", {err});
     process.exit(1);
