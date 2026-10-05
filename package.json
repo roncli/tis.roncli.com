@@ -32,7 +32,7 @@
         "@types/html-minifier-terser": "7.0.2",
         "@types/jest": "30.0.0",
         "@types/node": "26.6.4",
-        "eslint-plugin-jsdoc": "65.0.0",
+        "eslint-plugin-jsdoc": "65.0.1",
         "globals": "17.13.0",
         "jest": "30.5.2",
         "node-mocks-http": "1.18.1"
